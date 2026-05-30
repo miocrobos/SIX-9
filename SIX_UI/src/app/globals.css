@@ -43,7 +43,7 @@
     --lp-text-faint: #888;
     --lp-text-dim: #AAA;
     --lp-border: #E8E8E8;
-    --lp-step-n: #F0F0F0;
+    --lp-step-n: #000000;
   }
 
   .dark {
@@ -79,13 +79,18 @@
     --lp-text-faint: #888;
     --lp-text-dim: #666;
     --lp-border: #1f1f1f;
-    --lp-step-n: #1a1a1a;
+    --lp-step-n: #ffffff;
   }
 }
 
 @layer base {
   * {
     @apply border-border;
+  }
+
+  /* Global default: pure black in light, pure white in dark — for all non-red text */
+  body {
+    @apply text-black dark:text-white;
   }
 }
 

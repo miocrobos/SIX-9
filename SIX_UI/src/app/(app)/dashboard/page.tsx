@@ -110,16 +110,16 @@ export default function DashboardPage() {
       </div>
 
       {/* Quick Access Cards */}
-      <div className="grid grid-cols-3 xl:grid-cols-5 gap-4 mb-8">
+      <div className="grid grid-cols-3 xl:grid-cols-5 gap-4 mb-8" style={{ alignItems: 'start' }}>
         {quickAccess.map(card => (
-          <Card key={card.href} className={`p-5 bg-gradient-to-br ${card.gradient} border ${card.border} flex flex-col`}>
-            <div className={`w-12 h-12 rounded-2xl ${card.iconBg} flex items-center justify-center mb-4`}>
-              <card.icon size={22} className={card.iconColor} />
+          <Card key={card.href} className={`p-4 bg-gradient-to-br ${card.gradient} border ${card.border} flex flex-col h-fit`}>
+            <div className={`w-10 h-10 rounded-xl ${card.iconBg} flex items-center justify-center mb-3`}>
+              <card.icon size={18} className={card.iconColor} />
             </div>
             <p className="text-xs font-semibold text-gray-500 uppercase tracking-widest mb-1">{card.subtitle}</p>
-            <h3 className="text-xl font-black text-[#1A1A1A] mb-2">{card.title}</h3>
-            <p className="text-sm text-gray-500 flex-1 leading-relaxed">{card.description}</p>
-            <Button variant={card.btnVariant} size="sm" asChild className="mt-5 w-full">
+            <h3 className="text-lg font-black text-[#1A1A1A] mb-2">{card.title}</h3>
+            <p className="text-xs text-gray-500 leading-relaxed line-clamp-2">{card.description}</p>
+            <Button variant={card.btnVariant} size="sm" asChild className="mt-4 w-full">
               <Link href={card.href} className="flex items-center justify-center gap-2">
                 {card.btnLabel} <ArrowRight size={14} />
               </Link>

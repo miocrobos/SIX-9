@@ -100,7 +100,7 @@ export default function LandingPage() {
         opacity: introComplete ? 1 : 0,
         transition: 'opacity 0.5s ease',
       }}
-      className="min-h-screen bg-white dark:bg-black text-[#1A1A1A] dark:text-[#D92525]"
+      className="min-h-screen bg-white dark:bg-black text-[#1A1A1A] dark:text-white"
     >
 
       {/* ── HEADER ─────────────────────────────────────────────── */}
@@ -109,7 +109,7 @@ export default function LandingPage() {
           {/* Logo */}
           <Link href="/" className="flex items-center gap-3">
             <Image src="/six-logo.png" alt="SIX" width={52} height={26} priority style={{ filter: 'brightness(0) saturate(100%) invert(19%) sepia(100%) saturate(5000%) hue-rotate(353deg) brightness(85%)' }} />
-            <span className="font-bold text-[#1A1A1A] dark:text-[#D92525]" style={{ fontSize: '0.95rem', letterSpacing: '-0.01em' }}>
+            <span className="font-bold text-[#1A1A1A] dark:text-white" style={{ fontSize: '0.95rem', letterSpacing: '-0.01em' }}>
               Knowledge Hub
             </span>
           </Link>
@@ -162,7 +162,7 @@ export default function LandingPage() {
           <div className="md:hidden border-t border-[#E8E8E8] dark:border-[#1f1f1f] bg-white dark:bg-black px-6 py-4 space-y-3">
             {navLinks.map(l => (
               <a key={l.label} href={l.href} onClick={() => setMenuOpen(false)}
-                style={{ display: 'block', fontWeight: 700, color: '#333', textDecoration: 'none' }}>
+                style={{ display: 'block', fontWeight: 700, textDecoration: 'none' }}>
                 {l.label}
               </a>
             ))}

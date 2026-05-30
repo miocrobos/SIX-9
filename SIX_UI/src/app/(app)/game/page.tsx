@@ -187,7 +187,7 @@ export default function KnowGamePage() {
 
           {/* Play Button */}
           <Button variant="duo-green" size="lg" asChild className="w-full text-xl py-5">
-            <Link href="/game/play" className="flex items-center justify-center gap-3">
+            <Link href={`/game/play?mode=${selected}`} className="flex items-center justify-center gap-3">
               <Play size={24} className="fill-white" />
               Start Game
               <ArrowRight size={20} />

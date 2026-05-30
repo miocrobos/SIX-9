@@ -41,6 +41,23 @@ const leaderboardData: Player[] = [
   { rank: 12, name: 'Jan Doe', dept: 'Legal & Compliance', initials: 'JD', xp: 2480, streak: 7, badges: 8, contributions: 9, delta: 2, gradient: 'from-duo-purple to-duo-blue', isMe: true },
 ]
 
+// Monthly XP is ~40% of all-time; weekly is ~10%
+const monthlyData: Player[] = leaderboardData.map(p => ({ ...p, xp: Math.round(p.xp * 0.40) }))
+const weeklyData: Player[] = [
+  { ...leaderboardData[1], rank: 1, xp: 620, delta: 1 },   // Mirko top this week
+  { ...leaderboardData[0], rank: 2, xp: 540, delta: -1 },  // Jacob second
+  { ...leaderboardData[3], rank: 3, xp: 490, delta: 1 },   // Jennifer climbs
+  { ...leaderboardData[2], rank: 4, xp: 440, delta: -1 },
+  { ...leaderboardData[5], rank: 5, xp: 380, delta: 1 },
+  { ...leaderboardData[4], rank: 6, xp: 310, delta: -1 },
+  { ...leaderboardData[6], rank: 7, xp: 270, delta: 0 },
+  { ...leaderboardData[10], rank: 8, xp: 240, delta: 3 },  // Lena surges
+  { ...leaderboardData[7], rank: 9, xp: 210, delta: -1 },
+  { ...leaderboardData[8], rank: 10, xp: 180, delta: -1 },
+  { ...leaderboardData[9], rank: 11, xp: 160, delta: -1 },
+  { ...leaderboardData[11], rank: 12, xp: 140, delta: 0 },
+]
+
 interface BadgeItem {
   id: number
   name: string
@@ -73,8 +90,10 @@ function RankIcon({ rank }: { rank: number }) {
 
 export default function LeaderboardPage() {
   const [period, setPeriod] = useState<'weekly' | 'monthly' | 'alltime'>('monthly')
-  const me = leaderboardData.find(p => p.isMe)!
-  const top3 = leaderboardData.slice(0, 3)
+
+  const activeData = period === 'weekly' ? weeklyData : period === 'monthly' ? monthlyData : leaderboardData
+  const me = activeData.find(p => p.isMe)!
+  const top3 = activeData.slice(0, 3)
 
   return (
     <div className="p-8 max-w-5xl mx-auto">
@@ -136,10 +155,10 @@ export default function LeaderboardPage() {
         <div className="col-span-2 overflow-hidden rounded-lg border bg-card text-card-foreground shadow-sm">
           <div className="px-5 py-4 border-b border-[#E8E8F0] dark:border-[#2a2a2a] flex items-center justify-between">
             <h2 className="font-bold text-[#1A1A1A] text-sm">Rankings</h2>
-            <span className="text-xs text-gray-500">{leaderboardData.length} participants</span>
+            <span className="text-xs text-gray-500">{activeData.length} participants</span>
           </div>
           <div className="divide-y divide-[#1F1F1F]">
-            {leaderboardData.map(player => (
+            {activeData.map(player => (
               <div
                 key={player.rank}
                 className={`flex items-center gap-3 px-5 py-3 transition-colors

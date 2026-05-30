@@ -170,8 +170,10 @@ function NodeCard({ node, onSelect, selected }: { node: PathNode; onSelect: (n: 
                 <BookOpen size={11} /> Textbook
               </Link>
             </Button>
-            <Button variant="duo-green" size="sm" className="flex-1 flex items-center justify-center gap-1">
-              <Play size={11} /> {isCompleted ? 'Review' : 'Continue'}
+            <Button variant="duo-green" size="sm" asChild className="flex-1">
+              <Link href="/game/play?mode=quick" className="flex items-center justify-center gap-1">
+                <Play size={11} /> {isCompleted ? 'Review' : 'Continue'}
+              </Link>
             </Button>
           </div>
           </Card>
@@ -296,8 +298,10 @@ export default function DuoKnowPage() {
                         {path.nodes.find(n => n.status === 'active')?.completedLessons} of {path.nodes.find(n => n.status === 'active')?.lessons} lessons done
                       </p>
                     </div>
-                    <Button variant="duo-green" size="sm" className="flex items-center gap-2">
-                      <Play size={14} /> Continue <ArrowRight size={14} />
+                    <Button variant="duo-green" size="sm" asChild>
+                      <Link href="/game/play?mode=quick" className="flex items-center gap-2">
+                        <Play size={14} /> Continue <ArrowRight size={14} />
+                      </Link>
                     </Button>
                   </div>
                 )}
