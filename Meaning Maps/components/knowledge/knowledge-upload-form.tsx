@@ -134,11 +134,7 @@ export function KnowledgeUploadForm() {
   const [author,       setAuthor]       = useState("")
   const [persona,      setPersona]      = useState(DEFAULT_VOICE)
 
-  useEffect(() => { setMounted(true) }, [])
-  if (!mounted) return null
-
-  // ── Validation helpers ────────────────────────────────────────────────────
-
+  // ALL hooks must be declared before any early return
   const handlePdfFile = useCallback((f: File) => {
     if (f.type !== "application/pdf") { setError("Only PDF files are accepted."); return }
     if (f.size > MAX_FILE_SIZE) { setError("PDF must be under 50 MB."); return }
@@ -153,6 +149,9 @@ export function KnowledgeUploadForm() {
     setError(null)
     setCoverFile(f)
   }, [])
+
+  useEffect(() => { setMounted(true) }, [])
+  if (!mounted) return null
 
   // ── Submit — exact flow from PDF Uploader's UploadForm.onSubmit ──────────
 
