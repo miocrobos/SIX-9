@@ -1,13 +1,12 @@
 'use client'
 import Image from 'next/image'
 import Link from 'next/link'
-import { useState } from 'react'
+import { useState, useCallback } from 'react'
 import {
   BookOpen, Trophy, Zap, Gamepad2, StickyNote,
-  Upload, MessageCircle, ArrowRight, CheckCircle,
-  BarChart3, Shield, Users, Star, ChevronDown
+  ArrowRight, CheckCircle,
+  BarChart3, Users, Star, ChevronDown
 } from 'lucide-react'
-import BranchSelector from '@/components/BranchSelector'
 import ThemeToggle from '@/components/ThemeToggle'
 import IntroAnimation from '@/components/IntroAnimation'
 import SplineHero from '@/components/SplineHero'
@@ -80,19 +79,19 @@ const navLinks = [
   { label: 'SIX Note', href: '/sixnote' },
 ]
 
+const headerNavLinks = navLinks.filter(link => link.label !== 'SIX Note')
+
 export default function LandingPage() {
   const [menuOpen, setMenuOpen] = useState(false)
   const [hubModal, setHubModal] = useState(false)
+  const [expandedHubCards, setExpandedHubCards] = useState<string[]>([])
   const [introComplete, setIntroComplete] = useState(false)
-  const [expandedFeature, setExpandedFeature] = useState<string | null>(null)
-
-  const toggleFeature = (key: string) =>
-    setExpandedFeature(prev => (prev === key ? null : key))
+  const handleIntroComplete = useCallback(() => setIntroComplete(true), [])
 
   return (
     <>
       {/* ── INTRO ANIMATION ─────────────────────────────────── */}
-      <IntroAnimation onComplete={() => setIntroComplete(true)} />
+      <IntroAnimation onComplete={handleIntroComplete} />
 
     <div
       style={{
@@ -100,7 +99,7 @@ export default function LandingPage() {
         opacity: introComplete ? 1 : 0,
         transition: 'opacity 0.5s ease',
       }}
-      className="min-h-screen bg-white dark:bg-black text-[#1A1A1A] dark:text-[#D92525]"
+      className="min-h-screen bg-white dark:bg-black text-[#1A1A1A] dark:text-white"
     >
 
       {/* ── HEADER ─────────────────────────────────────────────── */}
@@ -108,15 +107,12 @@ export default function LandingPage() {
         <div className="max-w-6xl mx-auto px-6 h-16 flex items-center justify-between">
           {/* Logo */}
           <Link href="/" className="flex items-center gap-3">
-            <Image src="/six-logo.png" alt="SIX" width={52} height={26} priority style={{ filter: 'brightness(0) saturate(100%) invert(19%) sepia(100%) saturate(5000%) hue-rotate(353deg) brightness(85%)' }} />
-            <span className="font-bold text-[#1A1A1A] dark:text-[#D92525]" style={{ fontSize: '0.95rem', letterSpacing: '-0.01em' }}>
-              Knowledge Hub
-            </span>
+            <Image src="/Six-Sense.png" alt="SIX SENSE" width={120} height={26} priority />
           </Link>
 
           {/* Desktop nav */}
           <nav className="hidden md:flex items-center gap-8">
-            {navLinks.map(l => (
+            {headerNavLinks.map(l => (
               <a
                 key={l.label}
                 href={l.href}
@@ -130,22 +126,7 @@ export default function LandingPage() {
 
           {/* CTA */}
           <div className="flex items-center gap-3">
-            <BranchSelector />
             <ThemeToggle />
-            <button
-              onClick={() => setHubModal(true)}
-              style={{
-                fontWeight: 700, fontSize: '0.875rem',
-                background: '#D92525', color: '#fff',
-                padding: '0.5rem 1.25rem', borderRadius: '8px',
-                border: 'none', cursor: 'pointer',
-                display: 'inline-flex', alignItems: 'center', gap: '6px',
-                boxShadow: '0 2px 0 #A01B10'
-              }}
-              className="hover:brightness-110 transition-all"
-            >
-              Enter Hub <ArrowRight size={14} />
-            </button>
             {/* Mobile burger */}
             <button
               className="md:hidden p-2"
@@ -160,9 +141,9 @@ export default function LandingPage() {
         {/* Mobile menu */}
         {menuOpen && (
           <div className="md:hidden border-t border-[#E8E8E8] dark:border-[#1f1f1f] bg-white dark:bg-black px-6 py-4 space-y-3">
-            {navLinks.map(l => (
+            {headerNavLinks.map(l => (
               <a key={l.label} href={l.href} onClick={() => setMenuOpen(false)}
-                style={{ display: 'block', fontWeight: 700, color: '#333', textDecoration: 'none' }}>
+                style={{ display: 'block', fontWeight: 700, textDecoration: 'none' }}>
                 {l.label}
               </a>
             ))}
@@ -219,18 +200,6 @@ export default function LandingPage() {
               >
                 Launch the Hub <ArrowRight size={16} />
               </button>
-              <a
-                href="#features"
-                style={{
-                  fontWeight: 700, fontSize: '1rem', color: 'var(--lp-text)',
-                  padding: '0.875rem 2rem', borderRadius: '10px',
-                  textDecoration: 'none', display: 'inline-flex', alignItems: 'center', gap: '8px',
-                  border: '2px solid var(--lp-border)',
-                }}
-                className="hover:border-[#D92525] hover:text-[#D92525] transition-all"
-              >
-                See Features <ChevronDown size={16} />
-              </a>
             </div>
 
             {/* Trust signals */}
@@ -262,7 +231,7 @@ export default function LandingPage() {
         <div className="max-w-6xl mx-auto px-6 py-10 grid grid-cols-2 md:grid-cols-4 gap-8">
           {stats.map(({ value, label, icon: Icon }) => (
             <div key={label} className="flex flex-col items-center text-center">
-              <div style={{ background: '#FDF0F0', borderRadius: '12px', padding: '10px', marginBottom: '10px' }}>
+              <div style={{ background: '#FDF0F0', borderRadius: '10px', width: '30px', height: '30px', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '10px' }}>
                 <Icon size={20} style={{ color: '#D92525' }} />
               </div>
               <p style={{ fontWeight: 700, fontSize: '2rem', color: 'var(--lp-text)', letterSpacing: '-0.02em', lineHeight: 1 }}>{value}</p>
@@ -280,110 +249,25 @@ export default function LandingPage() {
             Five tools. One platform.
           </h2>
           <p style={{ color: 'var(--lp-text-muted)', fontSize: '1.0625rem', marginTop: '12px', fontWeight: 400 }}>
-            Everything your organisation needs to capture, share, and master institutional knowledge.
+            Open Launch the Hub to pick your tool.
           </p>
         </div>
 
-        <div className="feature-row">
-          {features.map(({ icon: Icon, title, tag, color, bg, desc, href }) => {
-            const isExp = expandedFeature === title
-            return (
-              <div
-                key={title}
-                className={`feature-card-wrapper${isExp ? ' is-expanded' : ''}`}
-                onClick={() => toggleFeature(title)}
-              >
-                <div
-                  className="feature-card-inner"
-                  style={{
-                    background: 'var(--lp-card)',
-                    border: '1.5px solid var(--lp-border)',
-                    borderRadius: '16px',
-                    position: 'relative',
-                    height: '100%',
-                    minHeight: '72px',
-                    overflow: 'hidden',
-                    transition: 'border-color 0.2s, box-shadow 0.2s',
-                  }}
-                >
-                  {/* Collapsed view — icon only (desktop) */}
-                  <div
-                    className="feature-collapsed-view"
-                    style={{
-                      position: 'absolute', inset: 0,
-                      flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
-                    }}
-                  >
-                    <div style={{ background: bg, borderRadius: '12px', width: '44px', height: '44px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                      <Icon size={20} style={{ color }} />
-                    </div>
-                  </div>
-
-                  {/* Expanded view — full card content */}
-                  <div
-                    className="feature-expanded-view"
-                    style={{ padding: '24px 20px', minHeight: '220px', display: 'flex', flexDirection: 'column' }}
-                  >
-                    <div style={{ background: bg, borderRadius: '12px', width: '48px', height: '48px', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '16px', flexShrink: 0 }}>
-                      <Icon size={22} style={{ color }} />
-                    </div>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '10px', flexWrap: 'wrap' }}>
-                      <h3 style={{ fontWeight: 700, fontSize: '1.05rem', color: 'var(--lp-text)', whiteSpace: 'nowrap' }}>{title}</h3>
-                      <span style={{ fontWeight: 700, fontSize: '0.65rem', color, background: bg, padding: '2px 8px', borderRadius: '20px', letterSpacing: '0.05em', textTransform: 'uppercase', whiteSpace: 'nowrap' }}>{tag}</span>
-                    </div>
-                    <p style={{ color: 'var(--lp-text-muted)', fontSize: '0.875rem', lineHeight: 1.65, fontWeight: 400, flex: 1 }}>{desc}</p>
-                    <Link
-                      href={href}
-                      onClick={e => e.stopPropagation()}
-                      style={{ marginTop: '16px', display: 'inline-flex', alignItems: 'center', gap: '4px', fontWeight: 700, fontSize: '0.8rem', color: '#D92525', textDecoration: 'none' }}
-                    >
-                      Explore <ArrowRight size={13} />
-                    </Link>
-                  </div>
-                </div>
-              </div>
-            )
-          })}
-
-          {/* "Enter the Hub" card */}
-          <div
-            className={`feature-card-wrapper${expandedFeature === 'hub' ? ' is-expanded' : ''}`}
-            onClick={() => toggleFeature('hub')}
+        <div style={{ display: 'flex', justifyContent: 'center' }}>
+          <button
+            onClick={() => setHubModal(true)}
+            style={{
+              fontWeight: 700, fontSize: '0.95rem',
+              background: '#D92525', color: '#fff',
+              padding: '0.75rem 1.5rem', borderRadius: '10px',
+              border: 'none', cursor: 'pointer',
+              display: 'inline-flex', alignItems: 'center', gap: '8px',
+              boxShadow: '0 3px 0 #A01B10'
+            }}
+            className="hover:brightness-110 transition-all"
           >
-              <div
-                className="feature-card-inner"
-                style={{ background: '#D92525', borderRadius: '16px', position: 'relative', height: '100%', minHeight: '72px', overflow: 'hidden' }}
-              >
-                {/* Collapsed view */}
-                <div
-                  className="feature-collapsed-view"
-                  style={{
-                    position: 'absolute', inset: 0,
-                    flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
-                  }}
-                >
-                  <Shield size={22} style={{ color: 'rgba(255,255,255,0.85)' }} />
-                </div>
-
-                {/* Expanded view */}
-                <div
-                  className="feature-expanded-view"
-                  style={{ padding: '24px 20px', minHeight: '220px', display: 'flex', flexDirection: 'column' }}
-                >
-                  <Shield size={28} style={{ color: 'rgba(255,255,255,0.7)', marginBottom: '16px', flexShrink: 0 }} />
-                  <h3 style={{ fontWeight: 700, fontSize: '1.1rem', color: '#fff', marginBottom: '8px' }}>Enter the Hub</h3>
-                  <p style={{ color: 'rgba(255,255,255,0.8)', fontSize: '0.875rem', lineHeight: 1.65, fontWeight: 400, flex: 1 }}>
-                    Access your full dashboard — learning paths, game modes, knowledge articles, and your personal stats.
-                  </p>
-                  <button
-                    onClick={e => { e.stopPropagation(); setHubModal(true) }}
-                    style={{ marginTop: '20px', display: 'inline-flex', alignItems: 'center', gap: '6px', fontWeight: 700, fontSize: '0.875rem', color: '#fff', background: 'rgba(255,255,255,0.2)', border: '1px solid rgba(255,255,255,0.35)', borderRadius: '8px', padding: '8px 14px', cursor: 'pointer' }}
-                  >
-                    Choose your entry <ArrowRight size={14} />
-                  </button>
-                </div>
-              </div>
-          </div>
+            Launch the Hub <ArrowRight size={14} />
+          </button>
         </div>
       </section>
 
@@ -439,7 +323,7 @@ export default function LandingPage() {
       <footer style={{ borderTop: '1px solid var(--lp-border)', background: 'var(--lp-bg)' }}>
         <div className="max-w-6xl mx-auto px-6 py-8 flex flex-col md:flex-row items-center justify-between gap-4">
           <div className="flex items-center gap-3">
-            <Image src="/six-logo.png" alt="SIX" width={40} height={20} style={{ filter: 'brightness(0) saturate(100%) invert(19%) sepia(100%) saturate(5000%) hue-rotate(353deg) brightness(85%)' }} />
+            <Image src="/Six-Sense.png" alt="SIX SENSE" width={72} height={20} />
             <span style={{ fontWeight: 700, fontSize: '0.8rem', color: 'var(--lp-text-faint)' }}>Knowledge Hub · Internal Platform</span>
           </div>
           <p style={{ fontSize: '0.8rem', color: 'var(--lp-text-dim)', fontWeight: 400 }}>
@@ -462,99 +346,126 @@ export default function LandingPage() {
       {/* ── ENTRY MODAL ────────────────────────────────────────── */}
       {hubModal && (
         <div
-          className="fixed inset-0 z-[100] flex items-center justify-center p-6"
+          className="fixed inset-0 z-[100] flex items-center justify-center p-4 md:p-6"
           style={{ background: 'rgba(10,10,10,0.55)', backdropFilter: 'blur(4px)' }}
           onClick={() => setHubModal(false)}
         >
           <div
             style={{
-              background: 'var(--lp-card)', borderRadius: '20px', width: '100%', maxWidth: '680px',
-              boxShadow: '0 24px 60px rgba(0,0,0,0.18)', overflow: 'hidden',
+              background: 'var(--lp-card)', borderRadius: '18px', width: '100%', maxWidth: '980px',
+              border: '1px solid var(--lp-border)',
+              boxShadow: '0 24px 60px rgba(0,0,0,0.18)', overflow: 'auto', maxHeight: 'min(88vh, 700px)',
               fontFamily: "'Helvetica Neue', Helvetica, Arial, sans-serif"
             }}
             onClick={e => e.stopPropagation()}
           >
             {/* Modal header */}
-            <div style={{ padding: '28px 32px 0', display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between' }}>
+            <div style={{ padding: '24px 28px 0', display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: '16px' }}>
               <div>
                 <p style={{ fontWeight: 700, fontSize: '0.7rem', color: '#D92525', letterSpacing: '0.1em', textTransform: 'uppercase', marginBottom: '6px' }}>WHERE DO YOU WANT TO GO?</p>
-                <h2 style={{ fontWeight: 700, fontSize: '1.5rem', color: 'var(--lp-text)', letterSpacing: '-0.025em', lineHeight: 1.2 }}>Choose your entry point</h2>
-                <p style={{ color: 'var(--lp-text-faint)', fontSize: '0.875rem', marginTop: '6px', fontWeight: 400 }}>Two separate tools, one platform.</p>
+                <h2 style={{ fontWeight: 700, fontSize: '1.35rem', color: 'var(--lp-text)', letterSpacing: '-0.025em', lineHeight: 1.15 }}>Launch the Hub</h2>
+                <p style={{ color: 'var(--lp-text-faint)', fontSize: '0.8125rem', marginTop: '6px', fontWeight: 400 }}>Five tools, one platform. Hover on desktop to preview each entry point.</p>
               </div>
               <button
                 onClick={() => setHubModal(false)}
                 style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#AAA', fontSize: '1.25rem', lineHeight: 1, padding: '4px', marginTop: '-4px' }}
-                className="hover:text-[#1A1A1A] transition-colors"
+                className="hover:text-[#1A1A1A] dark:hover:text-white dark:text-white transition-colors"
               >✕</button>
             </div>
 
-            {/* Two choice cards */}
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px', padding: '24px 32px 32px' }}>
+            <div style={{ padding: '20px 28px 28px' }}>
+              <div style={{ display: 'flex', alignItems: 'stretch', gap: '8px', overflowX: 'auto', paddingBottom: '4px' }}>
+                {features.map(({ icon: Icon, title, tag, color, bg, desc, href }) => {
+                  const isExpanded = expandedHubCards.includes(title)
+                  return (
+                    <div
+                      key={title}
+                      role="button"
+                      tabIndex={0}
+                      onClick={() =>
+                        setExpandedHubCards(prev =>
+                          prev.includes(title)
+                            ? prev.filter(card => card !== title)
+                            : [...prev, title]
+                        )
+                      }
+                      onKeyDown={e => {
+                        if (e.key === 'Enter' || e.key === ' ') {
+                          e.preventDefault()
+                          setExpandedHubCards(prev =>
+                            prev.includes(title)
+                              ? prev.filter(card => card !== title)
+                              : [...prev, title]
+                          )
+                        }
+                      }}
+                      style={{
+                        flex: isExpanded ? '1 1 260px' : '0 0 68px',
+                        minWidth: isExpanded ? '260px' : '68px',
+                        maxWidth: isExpanded ? '100%' : '68px',
+                        cursor: 'pointer',
+                        transition: 'flex 0.35s cubic-bezier(0.22, 1, 0.36, 1), min-width 0.35s cubic-bezier(0.22, 1, 0.36, 1)',
+                      }}
+                      aria-expanded={isExpanded}
+                      aria-label={`${title} ${isExpanded ? 'expanded' : 'collapsed'}`}
+                    >
+                      <div
+                        style={{
+                          background: isExpanded ? 'var(--lp-card)' : 'transparent',
+                          border: isExpanded ? '1.5px solid var(--lp-border)' : '1.5px solid transparent',
+                          borderRadius: '16px',
+                          minHeight: isExpanded ? '210px' : '68px',
+                          height: '100%',
+                          position: 'relative',
+                          overflow: 'hidden',
+                          transition: 'border-color 0.2s, box-shadow 0.2s, transform 0.2s',
+                          boxShadow: isExpanded ? '0 10px 36px rgba(0, 0, 0, 0.14)' : 'none',
+                          borderColor: isExpanded ? 'rgba(217, 37, 37, 0.3)' : 'transparent',
+                        }}
+                      >
+                        {!isExpanded && (
+                          <div
+                            style={{
+                              position: 'absolute',
+                              inset: 0,
+                              display: 'flex',
+                              alignItems: 'center',
+                              justifyContent: 'center',
+                            }}
+                          >
+                            <div style={{ background: bg, borderRadius: '10px', width: '33px', height: '33px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                              <Icon size={22} style={{ color }} />
+                            </div>
+                          </div>
+                        )}
 
-              {/* Knowledge Hub */}
-              <Link
-                href="/dashboard"
-                onClick={() => setHubModal(false)}
-                style={{ textDecoration: 'none', display: 'block' }}
-              >
-                <div
-                  style={{
-                    border: '2px solid var(--lp-border)', borderRadius: '16px', padding: '24px',
-                    cursor: 'pointer', transition: 'all 0.18s', height: '100%'
-                  }}
-                  className="hover:border-[#D92525] hover:shadow-md group"
-                >
-                  <div style={{ width: 48, height: 48, borderRadius: '12px', background: '#FDF0F0', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '14px' }}>
-                    <Zap size={22} style={{ color: '#D92525' }} />
-                  </div>
-                  <h3 style={{ fontWeight: 700, fontSize: '1.1rem', color: 'var(--lp-text)', marginBottom: '6px' }}>Knowledge Hub</h3>
-                  <p style={{ color: 'var(--lp-text-faint)', fontSize: '0.85rem', lineHeight: 1.6, fontWeight: 400, marginBottom: '16px' }}>
-                    Gamified learning paths, quizzes, leaderboards and the knowledge article library. Earn XP and build streaks.
-                  </p>
-                  <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px', marginBottom: '18px' }}>
-                    {['DuoKnow', 'Know Game', 'Leaderboard', 'Textbook'].map(t => (
-                      <span key={t} style={{ fontSize: '0.7rem', fontWeight: 700, background: '#FDF0F0', color: '#D92525', padding: '3px 9px', borderRadius: '20px' }}>{t}</span>
-                    ))}
-                  </div>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '5px', fontWeight: 700, fontSize: '0.85rem', color: '#D92525' }}
-                    className="opacity-0 group-hover:opacity-100 transition-opacity">
-                    Go to Dashboard <ArrowRight size={13} />
-                  </div>
-                </div>
-              </Link>
-
-              {/* SIX Note */}
-              <Link
-                href="/sixnote"
-                onClick={() => setHubModal(false)}
-                style={{ textDecoration: 'none', display: 'block' }}
-              >
-                <div
-                  style={{
-                    border: '2px solid var(--lp-border)', borderRadius: '16px', padding: '24px',
-                    cursor: 'pointer', transition: 'all 0.18s', height: '100%'
-                  }}
-                  className="hover:border-[#CE82FF] hover:shadow-md group"
-                >
-                  <div style={{ width: 48, height: 48, borderRadius: '12px', background: '#F8F0FF', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '14px' }}>
-                    <Upload size={22} style={{ color: '#CE82FF' }} />
-                  </div>
-                  <h3 style={{ fontWeight: 700, fontSize: '1.1rem', color: 'var(--lp-text)', marginBottom: '6px' }}>SIX Note</h3>
-                  <p style={{ color: 'var(--lp-text-faint)', fontSize: '0.85rem', lineHeight: 1.6, fontWeight: 400, marginBottom: '16px' }}>
-                    Upload institutional knowledge or ask AI-grounded questions. Every answer cites its source — no hallucinations.
-                  </p>
-                  <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px', marginBottom: '18px' }}>
-                    {['Upload Docs', 'Ask AI', 'Source Attribution', 'SME Verified'].map(t => (
-                      <span key={t} style={{ fontSize: '0.7rem', fontWeight: 700, background: '#F8F0FF', color: '#CE82FF', padding: '3px 9px', borderRadius: '20px' }}>{t}</span>
-                    ))}
-                  </div>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '5px', fontWeight: 700, fontSize: '0.85rem', color: '#CE82FF' }}
-                    className="opacity-0 group-hover:opacity-100 transition-opacity">
-                    Open SIX Note <ArrowRight size={13} />
-                  </div>
-                </div>
-              </Link>
-
+                        {isExpanded && (
+                          <div style={{ padding: '22px 18px', minHeight: '210px', display: 'flex', flexDirection: 'column' }}>
+                            <div style={{ background: bg, borderRadius: '10px', width: '33px', height: '33px', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '14px', flexShrink: 0 }}>
+                              <Icon size={22} style={{ color }} />
+                            </div>
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '10px', flexWrap: 'wrap' }}>
+                              <h3 style={{ fontWeight: 700, fontSize: '1.05rem', color: 'var(--lp-text)', whiteSpace: 'nowrap' }}>{title}</h3>
+                              <span style={{ fontWeight: 700, fontSize: '0.65rem', color, background: bg, padding: '2px 8px', borderRadius: '20px', letterSpacing: '0.05em', textTransform: 'uppercase', whiteSpace: 'nowrap' }}>{tag}</span>
+                            </div>
+                            <p style={{ color: 'var(--lp-text-muted)', fontSize: '0.875rem', lineHeight: 1.65, fontWeight: 400, flex: 1 }}>{desc}</p>
+                            <Link
+                              href={href}
+                              onClick={e => {
+                                e.stopPropagation()
+                                setHubModal(false)
+                              }}
+                              style={{ marginTop: '14px', display: 'inline-flex', alignItems: 'center', gap: '4px', fontWeight: 700, fontSize: '0.78rem', color: '#D92525', textDecoration: 'none' }}
+                            >
+                              Open {title} <ArrowRight size={13} />
+                            </Link>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  )
+                })}
+              </div>
             </div>
           </div>
         </div>

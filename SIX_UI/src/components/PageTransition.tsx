@@ -1,5 +1,5 @@
 'use client'
-import { useEffect } from 'react'
+import { useCallback, useEffect, useRef } from 'react'
 import type { LucideIcon } from 'lucide-react'
 
 interface PageTransitionProps {
@@ -15,10 +15,18 @@ export default function PageTransition({
   quote,
   onComplete,
 }: PageTransitionProps) {
-  useEffect(() => {
-    const t = setTimeout(onComplete, 4200)
-    return () => clearTimeout(t)
+  const completedRef = useRef(false)
+
+  const finish = useCallback(() => {
+    if (completedRef.current) return
+    completedRef.current = true
+    onComplete()
   }, [onComplete])
+
+  useEffect(() => {
+    const t = setTimeout(finish, 4200)
+    return () => clearTimeout(t)
+  }, [finish])
 
   return (
     <div
@@ -28,14 +36,18 @@ export default function PageTransition({
         display: 'flex', flexDirection: 'column',
         alignItems: 'center', justifyContent: 'center',
         animation: 'pgOverlay 4s ease forwards',
+        willChange: 'opacity',
+        transform: 'translateZ(0)',
       }}
-      onAnimationEnd={onComplete}
+      onAnimationEnd={(e) => {
+        if (e.target === e.currentTarget) finish()
+      }}
     >
       {/* Icon + red box container */}
       <div style={{ position: 'relative', display: 'inline-flex', alignItems: 'center', justifyContent: 'center' }}>
 
         {/* Natural-coloured icon — revealed after red box fades */}
-        <div style={{ animation: 'pgIcon 4s ease forwards', lineHeight: 1 }}>
+        <div style={{ animation: 'pgIcon 4s ease forwards', lineHeight: 1, willChange: 'opacity, transform' }}>
           <Icon size={52} color={iconColor} />
         </div>
 
@@ -48,9 +60,10 @@ export default function PageTransition({
             borderRadius: 14,
             display: 'flex', alignItems: 'center', justifyContent: 'center',
             animation: 'pgRedBox 4s ease forwards',
+            willChange: 'opacity, transform',
           }}
         >
-          <div style={{ animation: 'pgIconWiggle 4s ease forwards', lineHeight: 1 }}>
+          <div style={{ animation: 'pgIconWiggle 4s ease forwards', lineHeight: 1, willChange: 'transform' }}>
             <Icon size={52} color="white" />
           </div>
         </div>
@@ -67,6 +80,7 @@ export default function PageTransition({
           maxWidth: 260, textAlign: 'center', lineHeight: 1.6,
           color: 'var(--overlay-text)',
           animation: 'pgQuote 4s ease forwards',
+          willChange: 'opacity, transform',
         }}
       >
         {quote}

@@ -31,8 +31,8 @@ export default function Sidebar() {
       {/* Logo */}
       <div className="px-6 py-6 border-b border-[#2A2A2A]">
         <div className="flex items-center gap-3">
-          <div className="bg-[#D92525] rounded-xl px-2 py-1.5 flex items-center justify-center">
-            <Image src="/six-logo.png" alt="SIX" width={52} height={14} priority className="brightness-0 invert" />
+          <div className="rounded-xl px-2 py-1.5 flex items-center justify-center gap-1.5">
+            <Image src="/Six-Sense.png" alt="SIX SENSE" width={104} height={24} priority />
           </div>
           <div>
             <p className="font-bold text-white text-sm leading-tight">Knowledge</p>

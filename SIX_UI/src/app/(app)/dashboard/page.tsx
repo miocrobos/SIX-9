@@ -68,14 +68,14 @@ const deptCoverage = [
 
 export default function DashboardPage() {
   return (
-    <div className="p-8 max-w-6xl mx-auto">
+    <div className="p-4 md:p-8 max-w-6xl mx-auto">
       {/* Header */}
       <div className="mb-8">
         <div className="flex items-center gap-2 mb-1">
           <Badge variant="streak"><Flame size={14} /> 7</Badge>
           <span className="text-gray-600 text-sm">day streak</span>
         </div>
-        <h1 className="text-3xl font-black text-[#1A1A1A]">Good morning, Jan</h1>
+        <h1 className="text-3xl font-black text-[#1A1A1A] dark:text-white">Good morning, Jan</h1>
         <p className="text-gray-500 mt-1">Your organization's knowledge is growing. Here's today's overview.</p>
       </div>
 
@@ -96,13 +96,13 @@ export default function DashboardPage() {
       </div>
 
       {/* Stats Grid */}
-      <div className="grid grid-cols-4 gap-4 mb-8">
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4 mb-6 md:mb-8">
         {stats.map(s => (
           <Card key={s.label} className="p-5">
             <div className={`inline-flex p-2.5 rounded-xl ${s.bg} mb-3`}>
               <s.icon size={18} className={s.color} />
             </div>
-            <p className="text-2xl font-black text-[#1A1A1A]">{s.value}</p>
+            <p className="text-2xl font-black text-[#1A1A1A] dark:text-white">{s.value}</p>
             <p className="text-xs text-gray-500 mt-0.5">{s.label}</p>
             <p className={`text-xs mt-2 ${s.color} font-medium`}>{s.delta}</p>
           </Card>
@@ -110,16 +110,16 @@ export default function DashboardPage() {
       </div>
 
       {/* Quick Access Cards */}
-      <div className="grid grid-cols-3 xl:grid-cols-5 gap-4 mb-8">
+      <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-5 gap-3 md:gap-4 mb-6 md:mb-8">
         {quickAccess.map(card => (
-          <Card key={card.href} className={`p-5 bg-gradient-to-br ${card.gradient} border ${card.border} flex flex-col`}>
-            <div className={`w-12 h-12 rounded-2xl ${card.iconBg} flex items-center justify-center mb-4`}>
-              <card.icon size={22} className={card.iconColor} />
+          <Card key={card.href} className={`p-4 bg-gradient-to-br ${card.gradient} border ${card.border} flex flex-col self-start`}>
+            <div className={`w-10 h-10 rounded-xl ${card.iconBg} flex items-center justify-center mb-3`}>
+              <card.icon size={18} className={card.iconColor} />
             </div>
             <p className="text-xs font-semibold text-gray-500 uppercase tracking-widest mb-1">{card.subtitle}</p>
-            <h3 className="text-xl font-black text-[#1A1A1A] mb-2">{card.title}</h3>
-            <p className="text-sm text-gray-500 flex-1 leading-relaxed">{card.description}</p>
-            <Button variant={card.btnVariant} size="sm" asChild className="mt-5 w-full">
+            <h3 className="text-lg font-black text-[#1A1A1A] dark:text-white mb-2">{card.title}</h3>
+            <p className="text-xs text-gray-500 leading-relaxed line-clamp-2">{card.description}</p>
+            <Button variant={card.btnVariant} size="sm" asChild className="mt-4 w-full">
               <Link href={card.href} className="flex items-center justify-center gap-2">
                 {card.btnLabel} <ArrowRight size={14} />
               </Link>
@@ -131,7 +131,7 @@ export default function DashboardPage() {
       {/* Recent Activity */}
       <Card className="p-6">
         <div className="flex items-center justify-between mb-5">
-          <h2 className="font-bold text-[#1A1A1A] flex items-center gap-2">
+          <h2 className="font-bold text-[#1A1A1A] dark:text-white flex items-center gap-2">
             <Clock size={16} className="text-gray-500" />
             Recently Updated Knowledge
           </h2>
@@ -146,11 +146,11 @@ export default function DashboardPage() {
                 <FileText size={15} className="text-gray-500 group-hover:text-[#D92525] transition-colors" />
               </div>
               <div className="flex-1 min-w-0">
-                <p className="text-sm font-semibold text-[#1A1A1A] truncate">{item.title}</p>
+                <p className="text-sm font-semibold text-[#1A1A1A] dark:text-white truncate">{item.title}</p>
                 <p className="text-xs text-gray-500 mt-0.5">{item.author} · {item.dept}</p>
               </div>
-              <div className="flex items-center gap-3 flex-shrink-0">
-                <Badge variant="outline" className={`text-xs font-medium
+              <div className="flex items-center gap-2 md:gap-3 flex-shrink-0">
+                <Badge variant="outline" className={`text-xs font-medium hidden sm:inline-flex
                   ${item.type === 'Policy' ? 'border-[#D92525]/40 text-[#D92525] bg-[#D92525]/10'
                   : item.type === 'Process' ? 'border-[#58CC02]/40 text-[#58CC02] bg-[#58CC02]/10'
                   : item.type === 'Technical' ? 'border-[#CE82FF]/40 text-[#CE82FF] bg-[#CE82FF]/10'
@@ -160,7 +160,7 @@ export default function DashboardPage() {
                 {item.verified
                   ? <CheckCircle size={14} className="text-[#58CC02]" />
                   : <AlertCircle size={14} className="text-[#FF9600]" />}
-                <span className="text-xs text-gray-600">{item.time}</span>
+                <span className="text-xs text-gray-600 whitespace-nowrap">{item.time}</span>
               </div>
             </div>
           ))}
@@ -169,16 +169,16 @@ export default function DashboardPage() {
 
       {/* Knowledge Coverage */}
       <Card className="p-6 mt-4">
-        <h2 className="font-bold text-[#1A1A1A] mb-5 flex items-center gap-2">
+        <h2 className="font-bold text-[#1A1A1A] dark:text-white mb-5 flex items-center gap-2">
           <Database size={16} className="text-gray-500" />
           Department Knowledge Coverage
         </h2>
-        <div className="grid grid-cols-2 gap-x-8 gap-y-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-4">
           {deptCoverage.map(d => (
             <div key={d.dept}>
               <div className="flex justify-between text-xs mb-1.5">
                 <span className="text-gray-500">{d.dept}</span>
-                <span className="text-[#1A1A1A] font-semibold">{d.pct}%</span>
+                <span className="text-[#1A1A1A] dark:text-white font-semibold">{d.pct}%</span>
               </div>
               <Progress value={d.pct} className="h-3" indicatorClassName={d.indicator} />
             </div>

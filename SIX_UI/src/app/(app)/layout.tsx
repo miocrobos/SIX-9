@@ -1,5 +1,6 @@
 import AppHeader from '@/components/AppHeader'
 import AIChatbox from '@/components/AIChatbox'
+import MobileNav from '@/components/MobileNav'
 
 export default function AppLayout({ children }: { children: React.ReactNode }) {
   return (
@@ -8,10 +9,12 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
       style={{ fontFamily: "'Helvetica Neue', Helvetica, Arial, sans-serif" }}
     >
       <AppHeader />
-      <main>
+      {/* pb-16 on mobile clears the fixed bottom nav bar */}
+      <main className="pb-16 md:pb-0">
         {children}
       </main>
       <AIChatbox />
+      <MobileNav />
     </div>
   )
 }

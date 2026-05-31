@@ -6,6 +6,7 @@ import {
   FileText, Video, Link2, Database, Eye, ThumbsUp, Shield, X
 } from 'lucide-react'
 import PageTransition from '@/components/PageTransition'
+import BranchSelector from '@/components/BranchSelector'
 import { Card } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
@@ -145,7 +146,7 @@ function ArticleCard({ article, onOpen }: { article: Article; onOpen: (a: Articl
         </div>
       </div>
 
-      <h3 className="font-bold text-[#1A1A1A] text-sm mb-2 group-hover:text-[#D92525] transition-colors leading-snug">
+      <h3 className="font-bold text-[#1A1A1A] dark:text-white text-sm mb-2 group-hover:text-[#D92525] transition-colors leading-snug">
         {article.title}
       </h3>
       <p className="text-xs text-gray-500 leading-relaxed mb-3 line-clamp-2">{article.excerpt}</p>
@@ -155,7 +156,7 @@ function ArticleCard({ article, onOpen }: { article: Article; onOpen: (a: Articl
           <span className="text-xs font-bold">{article.author.charAt(0)}</span>
         </div>
         <div className="flex-1 min-w-0">
-          <span className="text-xs text-[#1A1A1A] font-medium">{article.author}</span>
+          <span className="text-xs text-[#1A1A1A] dark:text-white font-medium">{article.author}</span>
           <span className="text-xs text-gray-600"> · {article.dept}</span>
         </div>
         <span className="text-xs text-gray-600">{article.date}</span>
@@ -202,7 +203,7 @@ function ArticleModal({ article, onClose }: { article: Article; onClose: () => v
               : <span className="flex items-center gap-1 text-xs text-[#FF9600] font-medium"><AlertCircle size={11} /> Pending Review</span>
             }
           </div>
-          <DialogTitle className="text-xl font-black text-[#1A1A1A] leading-snug">{article.title}</DialogTitle>
+          <DialogTitle className="text-xl font-black text-[#1A1A1A] dark:text-white leading-snug">{article.title}</DialogTitle>
         </DialogHeader>
 
           <div className="flex items-center gap-3 mb-4 pb-4 border-b border-[#E8E8F0] dark:border-[#2a2a2a]">
@@ -210,7 +211,7 @@ function ArticleModal({ article, onClose }: { article: Article; onClose: () => v
               <span className="text-sm font-bold text-white">{article.author.charAt(0)}</span>
             </div>
             <div>
-              <p className="text-sm font-semibold text-[#1A1A1A]">{article.author}</p>
+              <p className="text-sm font-semibold text-[#1A1A1A] dark:text-white">{article.author}</p>
               <p className="text-xs text-gray-500">{article.dept} · {article.date}</p>
             </div>
             <div className="ml-auto flex items-center gap-1.5">
@@ -223,7 +224,7 @@ function ArticleModal({ article, onClose }: { article: Article; onClose: () => v
           <p className="text-sm text-gray-600 leading-relaxed mb-6">{article.excerpt}</p>
 
           <div className="bg-[#F5F5F7] rounded-xl p-4 mb-4">
-            <p className="text-xs font-bold text-[#1A1A1A] mb-3 flex items-center gap-1.5">
+            <p className="text-xs font-bold text-[#1A1A1A] dark:text-white mb-3 flex items-center gap-1.5">
               <Shield size={13} className="text-[#D92525]" /> Knowledge Traceability
             </p>
             <div className="space-y-2">
@@ -287,24 +288,24 @@ export default function TextbookPage() {
           onComplete={() => setTransitionDone(true)}
         />
       )}
-      <div className="p-8 max-w-6xl mx-auto">
+      <div className="p-4 md:p-8 max-w-6xl mx-auto">
       {openArticle && <ArticleModal article={openArticle} onClose={() => setOpenArticle(null)} />}
 
       {/* Header */}
       <div className="mb-6">
-        <h1 className="text-3xl font-black text-[#1A1A1A]">Knowledge Hub</h1>
+        <h1 className="text-2xl md:text-3xl font-black text-[#1A1A1A] dark:text-white">Knowledge Hub</h1>
         <p className="text-gray-500 mt-1">Transparent, traceable expert knowledge — with full source attribution.</p>
       </div>
 
       {/* Stats */}
-      <div className="flex items-center gap-4 mb-6">
+      <div className="flex items-center gap-2 md:gap-4 mb-4 md:mb-6 overflow-x-auto pb-1">
         {[
           { label: 'Total Articles', value: articles.length, color: 'text-[#D92525]' },
           { label: 'SME Verified', value: articles.filter(a => a.verified).length, color: 'text-[#58CC02]' },
           { label: 'Pending Review', value: articles.filter(a => !a.verified).length, color: 'text-[#FF9600]' },
           { label: 'Avg Confidence', value: `${Math.round(articles.reduce((s, a) => s + a.confidence, 0) / articles.length)}%`, color: 'text-[#D92525]' },
         ].map(s => (
-          <Card key={s.label} className="px-5 py-3 flex items-center gap-3">
+          <Card key={s.label} className="px-4 py-2.5 flex items-center gap-2 flex-shrink-0">
             <p className={`text-xl font-black ${s.color}`}>{s.value}</p>
             <p className="text-xs text-gray-500">{s.label}</p>
           </Card>
@@ -312,8 +313,8 @@ export default function TextbookPage() {
       </div>
 
       {/* Filters */}
-      <div className="flex items-center gap-3 mb-6 flex-wrap">
-        <div className="relative flex-1 min-w-64">
+      <div className="flex flex-col gap-2 md:gap-3 mb-4 md:mb-6">
+        <div className="relative flex-1">
           <Search size={15} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500" />
           <input
             value={search}
@@ -323,38 +324,40 @@ export default function TextbookPage() {
                        text-[#1A1A1A] dark:text-white placeholder-gray-300 focus:outline-none focus:border-[#D92525]/40 transition-all"
           />
         </div>
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-1.5 overflow-x-auto pb-1" style={{ scrollbarWidth: 'none' }}>
           <Filter size={14} className="text-gray-500" />
           {categories.map(c => (
             <button
               key={c}
               onClick={() => setCategory(c)}
               className={`text-xs px-3 py-1.5 rounded-lg font-medium transition-all
-                ${category === c ? 'bg-[#D92525] text-white' : 'bg-[#F5F5F7] dark:bg-[#111] text-gray-500 hover:text-[#1A1A1A] dark:hover:text-white border border-[#E8E8F0] dark:border-[#2a2a2a]'}`}
+                ${category === c ? 'bg-[#D92525] text-white' : 'bg-[#F5F5F7] dark:bg-[#111] text-gray-500 hover:text-[#1A1A1A] dark:hover:text-white dark:text-white dark:hover:text-white border border-[#E8E8F0] dark:border-[#2a2a2a]'}`}
             >
               {c === 'All' ? 'All Depts' : c.split(' ').slice(0, 1).join('') + (c.includes('&') ? ' & ' + c.split(' ').slice(-1) : '')}
             </button>
           ))}
         </div>
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-1.5 overflow-x-auto pb-1" style={{ scrollbarWidth: 'none' }}>
           {types.slice(1).map(t => (
             <button
               key={t}
               onClick={() => setType(type === t ? 'All' : t)}
               className={`text-xs px-3 py-1.5 rounded-lg font-medium transition-all
-                ${type === t ? `${typeColor[t]} border border-current` : 'bg-[#F5F5F7] dark:bg-[#111] text-gray-500 hover:text-[#1A1A1A] dark:hover:text-white border border-[#E8E8F0] dark:border-[#2a2a2a]'}`}
+                ${type === t ? `${typeColor[t]} border border-current` : 'bg-[#F5F5F7] dark:bg-[#111] text-gray-500 hover:text-[#1A1A1A] dark:hover:text-white dark:text-white dark:hover:text-white border border-[#E8E8F0] dark:border-[#2a2a2a]'}`}
             >
               {t}
             </button>
-          ))}
+          ))}          
         </div>
-        <button
-          onClick={() => setOnlyVerified(!onlyVerified)}
-          className={`flex items-center gap-1.5 text-xs px-3 py-1.5 rounded-lg font-medium border transition-all
-            ${onlyVerified ? 'bg-[#58CC02]/10 text-[#58CC02] border-[#58CC02]/30' : 'bg-[#F5F5F7] dark:bg-[#111] text-gray-500 border-[#E8E8F0] dark:border-[#2a2a2a] hover:text-[#1A1A1A]'}`}
-        >
-          <CheckCircle size={12} /> Verified only
-        </button>
+        <div className="flex items-center gap-1.5">
+          <button
+            onClick={() => setOnlyVerified(!onlyVerified)}
+            className={`flex items-center gap-1.5 text-xs px-3 py-1.5 rounded-lg font-medium border transition-all whitespace-nowrap
+              ${onlyVerified ? 'bg-[#58CC02]/10 text-[#58CC02] border-[#58CC02]/30' : 'bg-[#F5F5F7] dark:bg-[#111] text-gray-500 border-[#E8E8F0] dark:border-[#2a2a2a] hover:text-[#1A1A1A] dark:hover:text-white'}`}
+          >
+            <CheckCircle size={12} /> Verified only
+          </button>          <BranchSelector />      
+        </div>
       </div>
 
       {/* Results count */}
@@ -371,7 +374,7 @@ export default function TextbookPage() {
       </p>
 
       {/* Article Grid */}
-      <div className="grid grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-3 md:gap-4">
         {filtered.map(article => (
           <ArticleCard key={article.id} article={article} onOpen={setOpenArticle} />
         ))}

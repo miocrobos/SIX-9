@@ -36,11 +36,11 @@ export default function SixNotePage() {
           onComplete={() => setTransitionDone(true)}
         />
       )}
-      <div className="p-8 max-w-6xl mx-auto">
+      <div className="p-4 md:p-8 max-w-6xl mx-auto">
       {/* Header */}
       <div className="mb-8">
         <div className="flex items-center gap-2 mb-3">
-          <Link href="/dashboard" className="text-gray-500 hover:text-[#1A1A1A] text-sm transition-colors">Dashboard</Link>
+          <Link href="/dashboard" className="text-gray-500 hover:text-[#1A1A1A] dark:hover:text-white dark:text-white text-sm transition-colors">Dashboard</Link>
           <span className="text-gray-700">/</span>
           <span className="text-[#D92525] text-sm font-semibold">SIX Note</span>
         </div>
@@ -49,14 +49,14 @@ export default function SixNotePage() {
             <StickyNote size={24} className="text-[#D92525]" />
           </div>
           <div>
-            <h1 className="text-3xl font-black text-[#1A1A1A]">SIX Note</h1>
+            <h1 className="text-2xl md:text-3xl font-black text-[#1A1A1A] dark:text-white">SIX Note</h1>
             <p className="text-gray-500 text-sm">Capture knowledge. Ask questions. Build the collective intelligence of SIX.</p>
           </div>
         </div>
       </div>
 
       {/* Stats strip */}
-      <div className="grid grid-cols-4 gap-4 mb-8">
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4 mb-6 md:mb-8">
         {stats.map(s => (
           <Card key={s.label} className="p-4 flex items-center gap-3">
             <s.icon size={24} className={s.color} />
@@ -69,15 +69,15 @@ export default function SixNotePage() {
       </div>
 
       {/* Two main CTA cards */}
-      <div className="grid grid-cols-2 gap-6 mb-8">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6 mb-6 md:mb-8">
         {/* Upload Information */}
-        <Card className="p-8 bg-gradient-to-br from-[#D92525]/20 to-[#D92525]/5 border border-[#D92525]/30 flex flex-col">
+        <Card className="p-5 md:p-8 bg-gradient-to-br from-[#D92525]/20 to-[#D92525]/5 border border-[#D92525]/30 flex flex-col">
           <div className="flex items-center gap-4 mb-5">
             <div className="w-16 h-16 rounded-2xl bg-[#D92525]/20 border border-[#D92525]/30 flex items-center justify-center">
               <Upload size={28} className="text-[#D92525]" />
             </div>
             <div>
-              <h2 className="text-2xl font-black text-[#1A1A1A]">Upload Information</h2>
+              <h2 className="text-2xl font-black text-[#1A1A1A] dark:text-white">Upload Information</h2>
               <p className="text-gray-500 text-sm">Share your expertise with the team</p>
             </div>
           </div>
@@ -101,13 +101,13 @@ export default function SixNotePage() {
         </Card>
 
         {/* Ask Question */}
-        <Card className="p-8 bg-gradient-to-br from-[#CE82FF]/20 to-[#CE82FF]/5 border border-[#CE82FF]/30 flex flex-col">
+        <Card className="p-5 md:p-8 bg-gradient-to-br from-[#CE82FF]/20 to-[#CE82FF]/5 border border-[#CE82FF]/30 flex flex-col">
           <div className="flex items-center gap-4 mb-5">
             <div className="w-16 h-16 rounded-2xl bg-[#CE82FF]/20 border border-[#CE82FF]/30 flex items-center justify-center">
               <MessageCircle size={28} className="text-[#CE82FF]" />
             </div>
             <div>
-              <h2 className="text-2xl font-black text-[#1A1A1A]">Ask Question</h2>
+              <h2 className="text-2xl font-black text-[#1A1A1A] dark:text-white">Ask Question</h2>
               <p className="text-gray-500 text-sm">Get answers from verified knowledge</p>
             </div>
           </div>
@@ -134,7 +134,7 @@ export default function SixNotePage() {
       {/* Recent Activity */}
       <Card className="p-6">
         <div className="flex items-center justify-between mb-5">
-          <h3 className="font-bold text-[#1A1A1A]">Recent Activity</h3>
+          <h3 className="font-bold text-[#1A1A1A] dark:text-white">Recent Activity</h3>
           <div className="flex gap-2">
             <Link href="/sixnote/upload" className="text-xs text-[#D92525] hover:underline">+ Upload</Link>
             <span className="text-gray-700">·</span>
@@ -149,7 +149,7 @@ export default function SixNotePage() {
                 {note.type === 'Upload' ? <Upload size={16} /> : <MessageCircle size={16} />}
               </div>
               <div className="flex-1 min-w-0">
-                <p className="text-sm font-semibold text-[#1A1A1A] truncate">{note.title}</p>
+                <p className="text-sm font-semibold text-[#1A1A1A] dark:text-white truncate">{note.title}</p>
                 <p className="text-xs text-gray-500">{note.author} · {note.dept} · {note.time}</p>
               </div>
               <div className="flex items-center gap-2 shrink-0">
@@ -166,13 +166,13 @@ export default function SixNotePage() {
       </Card>
 
       {/* Cross-links */}
-      <div className="grid grid-cols-2 gap-4 mt-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 md:gap-4 mt-4 md:mt-6">
         <Card className="p-5 bg-gradient-to-br from-[#58CC02]/10 to-transparent border border-[#58CC02]/20 flex items-center gap-4">
           <div className="w-10 h-10 rounded-xl bg-[#58CC02]/20 flex items-center justify-center">
             <Zap size={18} className="text-[#58CC02]" />
           </div>
           <div className="flex-1">
-            <p className="font-bold text-[#1A1A1A] text-sm">Test Your Knowledge</p>
+            <p className="font-bold text-[#1A1A1A] dark:text-white text-sm">Test Your Knowledge</p>
             <p className="text-xs text-gray-500">Turn what you know into XP</p>
           </div>
           <Link href="/game" className="text-xs text-[#58CC02] hover:underline font-semibold">Play →</Link>
@@ -182,7 +182,7 @@ export default function SixNotePage() {
             <BookOpen size={18} className="text-[#D92525]" />
           </div>
           <div className="flex-1">
-            <p className="font-bold text-[#1A1A1A] text-sm">Knowledge Hub</p>
+            <p className="font-bold text-[#1A1A1A] dark:text-white text-sm">Knowledge Hub</p>
             <p className="text-xs text-gray-500">Browse all verified articles</p>
           </div>
           <Link href="/textbook" className="text-xs text-[#D92525] hover:underline font-semibold">Browse →</Link>

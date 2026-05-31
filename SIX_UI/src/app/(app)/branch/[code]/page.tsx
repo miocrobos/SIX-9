@@ -43,7 +43,7 @@ function NoteCard({ note, onOpen }: { note: BranchNote; onOpen: (n: BranchNote) 
         )}
       </div>
 
-      <h3 className="font-bold text-sm text-[#1A1A1A] leading-snug mb-2 group-hover:text-[#D92525] transition-colors">
+      <h3 className="font-bold text-sm text-[#1A1A1A] dark:text-white leading-snug mb-2 group-hover:text-[#D92525] transition-colors">
         {note.title}
       </h3>
       <p className="text-xs text-gray-500 leading-relaxed line-clamp-2 mb-3">{note.excerpt}</p>
@@ -269,14 +269,14 @@ export default function BranchPage() {
                 <Building2 size={15} className="text-[#D92525] flex-shrink-0" />
                 <div>
                   <p className="text-[10px] font-bold text-gray-400 uppercase tracking-wide">Established</p>
-                  <p className="text-sm font-bold text-[#1A1A1A]">{branch.established}</p>
+                  <p className="text-sm font-bold text-[#1A1A1A] dark:text-white">{branch.established}</p>
                 </div>
               </div>
               <div className="flex items-center gap-3 bg-[#F7F7F7] rounded-xl px-4 py-3">
                 <Users size={15} className="text-[#D92525] flex-shrink-0" />
                 <div>
                   <p className="text-[10px] font-bold text-gray-400 uppercase tracking-wide">Headcount</p>
-                  <p className="text-sm font-bold text-[#1A1A1A]">{branch.headcount}</p>
+                  <p className="text-sm font-bold text-[#1A1A1A] dark:text-white">{branch.headcount}</p>
                 </div>
               </div>
               <div className="flex items-start gap-3 bg-[#F7F7F7] rounded-xl px-4 py-3">
@@ -291,7 +291,7 @@ export default function BranchPage() {
         <div id="branch-notes" className="flex items-center justify-between mb-5">
           <div className="flex items-center gap-2">
             <BookOpen size={18} className="text-[#D92525]" />
-            <h2 className="font-bold text-lg text-[#1A1A1A]">Branch Notes & Information</h2>
+            <h2 className="font-bold text-lg text-[#1A1A1A] dark:text-white">Branch Notes & Information</h2>
             <span className="text-xs font-bold text-gray-400 bg-gray-100 px-2 py-0.5 rounded-full">
               {branch.notes.length}
             </span>

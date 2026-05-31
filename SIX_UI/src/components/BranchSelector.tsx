@@ -46,7 +46,7 @@ export default function BranchSelector() {
               />
             </div>
             <div className="flex-1 min-w-0">
-              <p className="font-bold text-[0.8rem] text-[#1A1A1A] leading-tight">{branch.city}</p>
+              <p className="font-bold text-[0.8rem] text-[#1A1A1A] dark:text-white leading-tight">{branch.city}</p>
               <p className="text-[0.7rem] text-gray-400 leading-tight">{branch.name}</p>
             </div>
           </DropdownMenuItem>
