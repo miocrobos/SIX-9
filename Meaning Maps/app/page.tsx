@@ -113,7 +113,7 @@ export default function HomePage() {
         >
           <div className="max-w-6xl mx-auto px-6 h-16 flex items-center justify-between">
             <Link href="/" className="flex items-center gap-3">
-              <Image src="/Six-Sense.png" alt="SIX SENSE" width={120} height={26} priority />
+              <Image src="/Six-Sense.png" alt="SIX SENSE" width={120} height={22} priority style={{ height: "auto" }} className="invert dark:invert-0" />
             </Link>
 
             <nav className="hidden md:flex items-center gap-8">

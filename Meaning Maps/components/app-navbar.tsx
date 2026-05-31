@@ -55,7 +55,15 @@ export function AppNavbar() {
           href="/"
           className="flex items-center gap-2 shrink-0 border-r border-[#E8E8E8] dark:border-[#1f1f1f] pr-3 md:pr-4"
         >
-          <Image src="/Six-Sense.png" alt="SIX SENSE" width={110} height={26} priority />
+          <Image
+            src="/Six-Sense.png"
+            alt="SIX SENSE"
+            width={120}
+            height={22}
+            priority
+            style={{ height: "auto" }}
+            className="invert dark:invert-0"
+          />
         </Link>
 
         {/* Tab navigation — desktop */}
