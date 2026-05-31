@@ -48,9 +48,11 @@ function toRecord<V>(
 
 interface SheetGridProps {
   onCellsChange?: (cells: Record<string, { value: string }>) => void
+  /** Cell keys currently being written by the AI (shown with animated highlight) */
+  aiCursorKeys?: Set<string>
 }
 
-export function SheetGrid({ onCellsChange }: SheetGridProps = {}) {
+export function SheetGrid({ onCellsChange, aiCursorKeys = new Set() }: SheetGridProps = {}) {
   const [selected, setSelected] = useState<{ row: number; col: number } | null>(null)
   const [editing, setEditing] = useState<{ row: number; col: number } | null>(null)
   const [editValue, setEditValue] = useState("")
@@ -166,6 +168,7 @@ export function SheetGrid({ onCellsChange }: SheetGridProps = {}) {
                   const key = cellKey(row, col)
                   const isSelected = selected?.row === row && selected?.col === col
                   const isEditing = editing?.row === row && editing?.col === col
+                  const isAiCursor = aiCursorKeys.has(key)
                   const value = cells[key]?.value ?? ""
                   const hasComment = Boolean(comments[key])
 
@@ -173,8 +176,9 @@ export function SheetGrid({ onCellsChange }: SheetGridProps = {}) {
                     <td
                       key={col}
                       className={cn(
-                        "relative border-r border-b border-border-default cursor-cell select-none px-1.5",
-                        isSelected && "outline outline-2 outline-accent-primary outline-offset-[-1px]"
+                        "relative border-r border-b border-border-default cursor-cell select-none px-1.5 transition-colors duration-100",
+                        isSelected && !isAiCursor && "ring-2 ring-accent-primary ring-inset",
+                        isAiCursor && "bg-[rgba(100,87,249,0.18)] ring-2 ring-accent-ai ring-inset animate-pulse"
                       )}
                       onClick={() => handleCellClick(row, col)}
                       onDoubleClick={() => handleCellDoubleClick(row, col)}
@@ -193,9 +197,19 @@ export function SheetGrid({ onCellsChange }: SheetGridProps = {}) {
                           className="absolute inset-0 w-full h-full px-1.5 bg-bg-surface text-text-primary outline-none border-2 border-accent-primary z-10 text-xs"
                         />
                       ) : (
-                        <span className="truncate text-text-primary leading-none">
+                        <span className={cn(
+                          "truncate leading-none",
+                          isAiCursor ? "text-accent-ai font-semibold" : "text-text-primary"
+                        )}>
                           {value}
                         </span>
+                      )}
+
+                      {/* AI cursor indicator */}
+                      {isAiCursor && (
+                        <div className="absolute top-0.5 left-0.5 flex items-center gap-0.5 pointer-events-none">
+                          <div className="h-1 w-1 rounded-full bg-accent-ai animate-ping" />
+                        </div>
                       )}
 
                       {hasComment && (
