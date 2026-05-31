@@ -1,9 +1,9 @@
 'use client'
 import { Suspense } from 'react'
 import Link from 'next/link'
-import { useState, useEffect, useCallback } from 'react'
+import { useState, useCallback } from 'react'
 import { useSearchParams } from 'next/navigation'
-import { ArrowLeft, Zap, Clock, CheckCircle, XCircle, ArrowRight, Trophy } from 'lucide-react'
+import { ArrowLeft, Zap, CheckCircle, XCircle, ArrowRight, Trophy } from 'lucide-react'
 
 const allQuestions = [
   {
@@ -269,10 +269,10 @@ const allQuestions = [
 ]
 
 const modeConfigs = {
-  quick:     { title: 'Quick Fire',       total: 10, time: 20, lives: 3, showHints: true,  emoji: '⚡', xpMax: 150, desc: '10 questions · 20s per question · 3 lives' },
-  deep:      { title: 'Deep Dive',        total: 25, time: 30, lives: 3, showHints: true,  emoji: '🎯', xpMax: 400, desc: '25 questions · 30s per question · 3 lives' },
-  challenge: { title: 'Weekly Challenge', total: 10, time: 20, lives: 3, showHints: true,  emoji: '🏆', xpMax: 300, desc: '10 questions · competitive · all departments' },
-  expert:    { title: 'Expert Mode',      total: 10, time: 15, lives: 1, showHints: false, emoji: '🔥', xpMax: 500, desc: '10 questions · 15s per question · 1 life · no hints' },
+  quick:     { title: 'Quick Fire',       total: 10, lives: 3, showHints: true,  emoji: '⚡', xpMax: 150, desc: '10 questions · 3 lives' },
+  deep:      { title: 'Deep Dive',        total: 25, lives: 3, showHints: true,  emoji: '🎯', xpMax: 400, desc: '25 questions · 3 lives' },
+  challenge: { title: 'Weekly Challenge', total: 10, lives: 3, showHints: true,  emoji: '🏆', xpMax: 300, desc: '10 questions · competitive · all departments' },
+  expert:    { title: 'Expert Mode',      total: 10, lives: 1, showHints: false, emoji: '🔥', xpMax: 500, desc: '10 questions · 1 life · no hints' },
 } as const
 
 type ModeKey = keyof typeof modeConfigs
@@ -290,7 +290,6 @@ function GamePlayContent() {
   const [answered, setAnswered] = useState(false)
   const [lives, setLives] = useState(cfg.lives)
   const [score, setScore] = useState(0)
-  const [timeLeft, setTimeLeft] = useState<number>(cfg.time)
   const [results, setResults] = useState<{ correct: boolean; chosen: number | null }[]>([])
   const [streak, setStreak] = useState(0)
   const [bestStreak, setBestStreak] = useState(0)
@@ -325,9 +324,8 @@ function GamePlayContent() {
       setCurrent(c => c + 1)
       setSelected(null)
       setAnswered(false)
-      setTimeLeft(cfg.time)
     }
-  }, [current, lives, selected, q, cfg.total, cfg.time])
+  }, [current, lives, selected, q, cfg.total])
 
   const handleRestart = useCallback(() => {
     setCurrent(0)
@@ -335,20 +333,11 @@ function GamePlayContent() {
     setAnswered(false)
     setLives(cfg.lives)
     setScore(0)
-    setTimeLeft(cfg.time)
     setResults([])
     setStreak(0)
     setBestStreak(0)
     setPhase('intro')
-  }, [cfg.lives, cfg.time])
-
-  // Timer
-  useEffect(() => {
-    if (phase !== 'playing' || answered) return
-    if (timeLeft <= 0) { handleAnswer(-1); return }
-    const t = setTimeout(() => setTimeLeft(tt => tt - 1), 1000)
-    return () => clearTimeout(t)
-  }, [phase, answered, timeLeft, handleAnswer])
+  }, [cfg.lives])
 
   const pct = Math.round((score / cfg.total) * 100)
   const grade = pct >= 90 ? { label: 'Outstanding!', color: 'text-six-gold', emoji: '🏆' }
@@ -369,7 +358,6 @@ function GamePlayContent() {
         <div className="grid grid-cols-3 gap-4 mb-10">
           {[
             { icon: cfg.lives === 1 ? '💀' : '❤️', label: `${cfg.lives} ${cfg.lives === 1 ? 'Life' : 'Lives'}` },
-            { icon: '⏱️', label: `${cfg.time}s Timer` },
             { icon: '⚡', label: `Up to ${cfg.xpMax} XP` },
           ].map(s => (
             <div key={s.label} className="six-card p-4">
@@ -446,9 +434,6 @@ function GamePlayContent() {
   )
 
   /* ── PLAYING ── */
-  const timerPct = (timeLeft / cfg.time) * 100
-  const timerColor = timerPct > 50 ? 'bg-duo-green' : timerPct > 25 ? 'bg-duo-orange' : 'bg-duo-red'
-
   return (
     <div className="p-8 max-w-2xl mx-auto">
       {/* HUD */}
@@ -479,17 +464,6 @@ function GamePlayContent() {
           <div className="h-full bg-duo-green rounded-full transition-all" style={{ width: `${(current / cfg.total) * 100}%` }} />
         </div>
         <span className="text-xs text-gray-500">{current}/{cfg.total}</span>
-      </div>
-
-      {/* Timer */}
-      <div className="mb-6">
-        <div className="flex items-center gap-2 mb-1.5">
-          <Clock size={12} className={timerPct <= 25 ? 'text-duo-red animate-bounce' : 'text-gray-500'} />
-          <span className={`text-xs font-bold ${timerPct <= 25 ? 'text-duo-red' : 'text-gray-500'}`}>{timeLeft}s</span>
-        </div>
-        <div className="h-1.5 bg-[#E8E8F0] dark:bg-[#2a2a2a] rounded-full overflow-hidden">
-          <div className={`h-full rounded-full transition-all duration-1000 ${timerColor}`} style={{ width: `${timerPct}%` }} />
-        </div>
       </div>
 
       {/* Question Card */}

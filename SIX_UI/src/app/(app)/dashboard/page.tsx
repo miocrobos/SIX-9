@@ -26,7 +26,7 @@ const stats = [
 
 const quickAccess = [
   {
-    href: '/duoknow', title: 'DuoKnow', subtitle: 'Interactive learning paths',
+    href: '/game/play', title: 'DuoKnow', subtitle: 'Interactive learning paths',
     description: 'Master organizational knowledge through gamified modules. Earn XP, build streaks, and level up your expertise.',
     icon: Zap, gradient: 'from-[#58CC02]/20 to-[#D92525]/10', border: 'border-[#58CC02]/30',
     iconBg: 'bg-[#58CC02]/20', iconColor: 'text-[#58CC02]', btnVariant: 'duo-green' as const, btnLabel: 'Start Learning',

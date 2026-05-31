@@ -74,7 +74,7 @@ const gameModes: GameMode[] = [
     id: 'expert',
     title: 'Expert Mode',
     subtitle: 'No hints · Time pressure',
-    description: 'Only for knowledge champions. No lifelines, strict timer.',
+    description: 'Only for knowledge champions. No lifelines, no hints.',
     icon: Flame,
     color: 'text-[#FF4B4B]',
     border: 'border-[#FF4B4B]/30',

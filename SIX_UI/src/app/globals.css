@@ -133,6 +133,37 @@ body {
   100%     { opacity: 0; }
 }
 
+/* Dark-mode intro: make red box exit much faster */
+@keyframes sixRedBoxDark {
+  0%       { opacity: 0;   transform: scale(0.92); }
+  10%      { opacity: 1;   transform: scale(1);    }
+  26%      { opacity: 1;   transform: scale(1);    }
+  40%      { opacity: 0;   transform: scale(1.05); }
+  100%     { opacity: 0; }
+}
+
+/* Dark-mode intro: reveal logo earlier and keep it visible longer */
+@keyframes sixIntroLogoDark {
+  0%, 18%  { opacity: 0; }
+  34%      { opacity: 1; }
+  92%      { opacity: 1; }
+  100%     { opacity: 0; }
+}
+
+/* Dark-mode intro: show slogan earlier and hold it longer */
+@keyframes sixIntroTaglineDark {
+  0%, 10%  { opacity: 0; transform: translateY(5px); }
+  20%      { opacity: 1; transform: translateY(0);   }
+  94%      { opacity: 1; }
+  100%     { opacity: 0; }
+}
+
+/* Dark-mode intro: keep overlay while slogan is visible, then fade */
+@keyframes sixIntroOverlayDark {
+  0%, 92%  { opacity: 1; }
+  100%     { opacity: 0; pointer-events: none; }
+}
+
 /* Tagline: appears after logo is revealed, holds, fades out */
 @keyframes sixIntroTagline {
   0%, 62%  { opacity: 0; transform: translateY(5px); }

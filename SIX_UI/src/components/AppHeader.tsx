@@ -15,7 +15,7 @@ const sixNoteNavItems = [
 ]
 
 const duoKnowNavItems = [
-  { href: '/duoknow',     label: 'DuoKnow',   icon: Zap },
+  { href: '/game/play',   label: 'DuoKnow',   icon: Zap },
   { href: '/game',        label: 'Know Game', icon: Gamepad2 },
 ]
 
@@ -83,7 +83,7 @@ export default function AppHeader() {
             <>
               {/* Switch to DuoKnow — icon only on mobile */}
               <Link
-                href="/duoknow"
+                href="/game/play"
                 title="Switch to DuoKnow"
                 className="flex items-center gap-1.5 px-2 md:px-3 py-1.5 rounded-lg text-sm font-semibold text-gray-500 dark:text-gray-400 hover:bg-[#F5F5F7] dark:hover:bg-[#111] hover:text-[#D92525] dark:hover:text-[#D92525] transition-colors duration-200 border border-[#E8E8E8] dark:border-[#1f1f1f]"
               >
