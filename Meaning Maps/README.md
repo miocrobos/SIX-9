@@ -1,212 +1,283 @@
 <div align="center">
 
-  <h1>Six Sense</h1>
+# Six Sense — Unified Knowledge Hub
 
-<img src="https://img.shields.io/badge/-Next.js-black?style=for-the-badge&logo=nextdotjs&logoColor=white" />
-<img src="https://img.shields.io/badge/-Typescript-3178C6?style=for-the-badge&logo=typescript&logoColor=white" />
-<img src="https://img.shields.io/badge/-Tailwind_CSS-06B6D4?style=for-the-badge&logo=tailwindcss&logoColor=white" />
+**The canonical application for the SIX "Build the Company Brain" hackathon**
+
+<img src="https://img.shields.io/badge/-Next.js_16-000000?style=for-the-badge&logo=nextdotjs&logoColor=white" />
+<img src="https://img.shields.io/badge/-TypeScript-3178C6?style=for-the-badge&logo=typescript&logoColor=white" />
+<img src="https://img.shields.io/badge/-Tailwind_CSS_v4-06B6D4?style=for-the-badge&logo=tailwindcss&logoColor=white" />
 <img src="https://img.shields.io/badge/-shadcn/ui-000000?style=for-the-badge&logo=shadcnui&logoColor=white" /><br/>
-
+<img src="https://img.shields.io/badge/-Liveblocks-050505?style=for-the-badge&logo=liveblocks&logoColor=white" />
 <img src="https://img.shields.io/badge/-Prisma-2D3748?style=for-the-badge&logo=prisma&logoColor=white" />
 <img src="https://img.shields.io/badge/-PostgreSQL-336791?style=for-the-badge&logo=postgresql&logoColor=white" />
 <img src="https://img.shields.io/badge/-Clerk-6C47FF?style=for-the-badge&logo=clerk&logoColor=white" /><br/>
-
-<img src="https://img.shields.io/badge/Trigger.dev-22c55e?style=for-the-badge&logo=triggerdotdev&logoColor=white" />
-<img src="https://img.shields.io/badge/-Liveblocks-050505?style=for-the-badge&logo=liveblocks&logoColor=white" />
 <img src="https://img.shields.io/badge/-Google_Gemini-4285F4?style=for-the-badge&logo=google&logoColor=white" />
-
-  <h3 align="center">The Company Brain — turn documents and expertise into living knowledge maps</h3>
+<img src="https://img.shields.io/badge/-Vapi-62F6B5?style=for-the-badge" />
+<img src="https://img.shields.io/badge/-ElevenLabs-000000?style=for-the-badge" />
+<img src="https://img.shields.io/badge/-Trigger.dev-22c55e?style=for-the-badge" />
 
 </div>
+
+---
 
 ## 📋 Table of Contents
 
 1. [Introduction](#introduction)
-2. [The Challenge](#challenge)
+2. [Features](#features)
 3. [Tech Stack](#tech-stack)
-4. [Features](#features)
-5. [Quick Start](#quick-start)
-6. [Available Scripts](#scripts)
-7. [Project Structure](#structure)
-8. [How It Works](#how-it-works)
+4. [Quick Start](#quick-start)
+5. [Environment Variables](#env)
+6. [Project Structure](#structure)
+7. [How It Works](#how-it-works)
+
+---
 
 ## <a name="introduction">✨ Introduction</a>
 
-**Six Sense** is an AI-powered "company brain" that turns scattered documents and expert knowledge into living, collaborative **knowledge maps** (a.k.a. meaning maps / mind maps).
+**Six Sense** is an AI-powered "Company Brain" — a single Next.js application that merges three prototypes into one workspace:
 
-Employees describe a topic, process, or document in plain language, and **Sense AI** — an AI agent powered by Google Gemini — places concepts, documents, people, decisions, and processes as connected nodes on a shared real-time canvas. Colleagues watch the AI build the map live (you can see its cursor move), then jump in to refine and validate it together. When the map is ready, Six Sense generates an evidence-based, traceable Markdown **knowledge brief** that can be reused and downloaded.
+- **PDF Uploader** (voice-enabled knowledge ingestion) — fully ported: upload, parse, store, and *talk* to your documents with Vapi voice calls backed by ElevenLabs SME personas
+- **Meaning Maps** (collaborative workflow canvas) — the foundation: React Flow + Liveblocks canvas, live AI cursor, Trigger.dev background tasks, knowledge briefs
+- **SIX_UI** (branded shell + landing page) — landing page with Spline 3D hero, intro animation, and the SIX red (`#D92525`) design system
 
-The goal: make critical organizational knowledge transparent, traceable, governed, and reusable — so it no longer disappears when people change roles or leave.
+The result is a single, coherent workspace where every module shares authentication, theme, navigation, and data infrastructure.
 
-## <a name="challenge">🎯 The Challenge</a>
-
-Six Sense is built for the **SIX "Build the Company Brain"** challenge.
-
-> Critical organizational knowledge is often tied to individual employees and becomes difficult to access, validate, or reuse when people change roles or leave the company. The expected outcome is an AI-enabled solution that captures, contextualizes, and makes expert knowledge reusable in a transparent, traceable, and governed way.
-
-Six Sense addresses this by:
-
-- **Capturing** knowledge as a structured, visual map instead of buried prose.
-- **Contextualizing** it with labeled relationships (who owns what, what depends on what, what requires approval).
-- **Making it reusable** through collaborative editing and downloadable knowledge briefs.
-- **Keeping it governed and traceable** with authenticated access, per-project collaborators, and evidence-based AI output that flags gaps for subject-matter experts.
-
-## <a name="tech-stack">⚙️ Tech Stack</a>
-
-- **[Next.js](https://nextjs.org/)** — Full-stack React framework (App Router, server/client boundaries).
-- **[React](https://react.dev/)** + **[TypeScript](https://www.typescriptlang.org/)** — Type-safe, component-based UI.
-- **[Liveblocks](https://liveblocks.io/)** — Realtime infrastructure for multiplayer collaboration: shared state, presence, and live cursors (including the AI agent's cursor).
-- **[React Flow](https://reactflow.dev/)** — The node/edge canvas that renders the knowledge maps.
-- **[Clerk](https://clerk.com/)** — Authentication, user management, and route protection.
-- **[Trigger.dev](https://trigger.dev/)** — Durable background tasks for AI knowledge-map and knowledge-brief generation.
-- **[Google Gemini](https://ai.google.dev/)** (via the [AI SDK](https://sdk.vercel.ai/)) — The LLM powering Sense AI.
-- **[Prisma ORM](https://www.prisma.io/)** + **[PostgreSQL](https://www.postgresql.org/)** — Relational metadata: projects, collaborators, briefs, task runs.
-- **[Vercel Blob](https://vercel.com/docs/vercel-blob)** — Storage for canvas snapshots and generated knowledge briefs.
-- **[Tailwind CSS](https://tailwindcss.com/)** + **[shadcn/ui](https://ui.shadcn.com/)** — Utility-first styling and accessible components.
+---
 
 ## <a name="features">🔋 Features</a>
 
-👉 **AI Knowledge Mapping**: Describe a topic, process, or document and Sense AI maps the concepts, sources, people, decisions, and relationships onto a live canvas via Trigger.dev background tasks.
+### Knowledge (Voice + Text)
+- Upload PDFs with client-side text extraction (`pdfjs-dist`) — no server-side parsing bottleneck
+- Choose an SME expert persona (ElevenLabs voices) for your document
+- **Talk to your document** — Vapi manages the live voice call; the assistant's `searchBook` tool queries your extracted text segments for grounded, evidence-based answers
+- Type instead of speaking — voice and text are interchangeable in a single session
+- Gemini-generated AI summary cached on first view
+- In-app PDF modal reader — read the original source without leaving the page
+- Live transcript of every conversation for full traceability
 
-👉 **Live AI Collaborator**: Watch Sense AI's cursor glide across the canvas and place nodes/connections one by one, in real time, alongside your teammates.
+### Workflow (Knowledge Maps)
+- Drag-and-drop node/edge canvas (React Flow + Liveblocks)
+- Sense AI builds maps live: watch its cursor place nodes one by one in real time
+- Six node types: concept, document, person, event, decision, process
+- One-click Markdown knowledge brief generation (stored in Vercel Blob)
+- Prebuilt templates: Onboarding, Compliance Approval, Trade Settlement
+- Canvas auto-saves to Vercel Blob
 
-👉 **Multiplayer Canvas**: Full real-time collaboration powered by Liveblocks — synchronized node/edge state, live cursor positions, and presence avatars for everyone in the room.
+### Documents (Collaborative Editing)
+- Liveblocks Tiptap rich-text editor
+- Live cursors, presence avatars, and anchored comments
+- AI Copilot toolbar powered by Gemini
 
-👉 **Custom Knowledge Nodes**: Six node shapes (concept, document, person, event, decision, process), inline label editing, resizing, 8 colour swatches, and labeled relationship edges — all synced instantly.
+### Sheets (Collaborative Spreadsheet)
+- Liveblocks `LiveMap` cell storage — true multiplayer
+- Animated AI cursor that visibly writes cells in real time (same pattern as Workflow)
+- Cell comments, presence indicators, AI Copilot
 
-👉 **Knowledge Brief Generation**: One click converts the current map into a transparent, evidence-based Markdown brief (overview, key concepts, relationships, sources, ownership, and how to use the knowledge).
+### Dashboard
+- Recharts activity timeline
+- Recent-resource grids for all four modules
+- General-purpose AI Copilot panel
 
-👉 **Knowledge-Map Templates**: Start fast with prebuilt maps — Onboarding Knowledge, Compliance Approval, and Trade Settlement.
+### Platform
+- Light and dark themes — SIX red (`#D92525`) brand accent, AI purple (`#6457f9`) for Copilot features
+- Spline 3D animated hero on the landing page (graceful fallback if Spline fails to load)
+- Clerk authentication with route protection and per-resource collaborator access control
 
-👉 **Auth & Governance**: Global route protection via Clerk; Liveblocks tokens issued only to authenticated, authorized project members.
+---
 
-👉 **Auto-Save & Multi-Brief Storage**: Canvas auto-saves to Vercel Blob; each project can store multiple briefs, with metadata in PostgreSQL.
+## <a name="tech-stack">⚙️ Tech Stack</a>
 
-## <a name="quick-start">🤸 Quick Start</a>
+| Layer | Technology |
+|-------|-----------|
+| Framework | Next.js 16 (App Router, Turbopack) |
+| Language | TypeScript 5 |
+| Auth | Clerk |
+| Database | PostgreSQL + Prisma 7 (multi-file schema) |
+| Real-time | Liveblocks (Presence, Storage, Yjs, Comments, Feeds) |
+| AI / LLM | Google Gemini 2.5 Flash via `@ai-sdk/google` |
+| Voice | Vapi (`@vapi-ai/web`) + ElevenLabs personas |
+| File storage | Vercel Blob (two stores — see env vars) |
+| Background tasks | Trigger.dev v3 (runs inline as Next.js API routes in dev) |
+| Styling | Tailwind CSS v4, shadcn/ui, CSS custom properties |
+| Canvas | React Flow |
+| Rich text | Liveblocks Tiptap (`@liveblocks/react-tiptap`) |
+| PDF parsing | `pdfjs-dist` 5.4.x (client-side) |
+| 3D / Animation | `@splinetool/react-spline` |
+
+---
+
+## <a name="quick-start">🚀 Quick Start</a>
 
 ### Prerequisites
 
-- [Git](https://git-scm.com/)
-- [Node.js](https://nodejs.org/en) (18.18+; tested on Node 20)
-- [npm](https://www.npmjs.com/)
+- Node.js 20+
+- npm
+- A PostgreSQL database (Prisma Postgres, Neon, Supabase, or local)
 
-### Clone & Install
+### Install & run
 
 ```bash
-git clone <your-repo-url> six-sense
-cd six-sense
+# from repo root
+cd "Meaning Maps"
 npm install
-```
 
-### Environment Variables
-
-Create a `.env` file in the project root:
-
-```env
-# Clerk (auth)
-NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY=
-CLERK_SECRET_KEY=
-NEXT_PUBLIC_CLERK_SIGN_IN_URL=/sign-in
-NEXT_PUBLIC_CLERK_SIGN_UP_URL=/sign-up
-NEXT_PUBLIC_CLERK_SIGN_IN_FORCE_REDIRECT_URL=/editor
-NEXT_PUBLIC_CLERK_SIGN_UP_FORCE_REDIRECT_URL=/editor
-NEXT_PUBLIC_CLERK_AFTER_SIGN_OUT_URL=/sign-in
-
-# Liveblocks (realtime canvas)
-LIVEBLOCKS_PUBLIC_API_KEY=
-LIVEBLOCKS_SECRET_KEY=        # must start with sk_
-
-# Trigger.dev (background AI tasks)
-TRIGGER_SECRET_KEY=
-TRIGGER_PROJECT_REF=
-
-# Database (Postgres)
-DATABASE_URL=
-
-# Vercel Blob (artifact storage — use a private store)
-BLOB_READ_WRITE_TOKEN=
-
-# Google Gemini
-GOOGLE_GENERATIVE_AI_API_KEY=
-# Optional: override the default model (default: gemini-2.5-flash)
-GEMINI_MODEL=
-
-APP_URL=http://localhost:3000
-```
-
-Get credentials from: [Clerk](https://clerk.com/), [Liveblocks](https://liveblocks.io/), [Trigger.dev](https://trigger.dev/), [Vercel Blob](https://vercel.com/docs/vercel-blob), and [Google AI Studio](https://aistudio.google.com/).
-
-> **Note:** The Vercel Blob store must be configured with **private** access (canvas snapshots and briefs are uploaded with `access: "private"`).
-
-### Database
-
-Apply the Prisma migrations to your Postgres database:
-
-```bash
+# apply database migrations
 npx prisma migrate deploy
-```
+npx prisma generate
 
-### Run
-
-Six Sense needs **two processes** running at the same time:
-
-```bash
-# Terminal 1 — Next.js app
+# start the dev server
 npm run dev
-
-# Terminal 2 — Trigger.dev worker (executes the AI background tasks)
-npx trigger.dev@latest dev
 ```
 
 Open [http://localhost:3000](http://localhost:3000).
 
-> The Trigger.dev worker must be running for Sense AI (knowledge maps and briefs) to work. If you change `.env`, restart **both** processes.
+> **Note:** The dev server starts on port 3000 by default. If that port is in use, Next.js will automatically select the next available port.
 
-## <a name="scripts">🧰 Available Scripts</a>
+---
 
-| Command                          | Description                          |
-| -------------------------------- | ------------------------------------ |
-| `npm run dev`                    | Start the Next.js development server |
-| `npm run build`                  | Build for production                 |
-| `npm run start`                  | Start the production server          |
-| `npm run lint`                   | Run ESLint                           |
-| `npx prisma migrate deploy`      | Apply pending database migrations    |
-| `npx prisma studio`              | Open the Prisma Studio GUI           |
-| `npx trigger.dev@latest dev`     | Run the Trigger.dev worker locally   |
+## <a name="env">🔑 Environment Variables</a>
+
+Create `.env.local` (takes precedence over `.env`) in `Meaning Maps/`:
+
+```env
+# ── Clerk ──────────────────────────────────────────────────────────────────
+NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY=
+CLERK_SECRET_KEY=
+NEXT_PUBLIC_CLERK_SIGN_IN_URL=/sign-in
+NEXT_PUBLIC_CLERK_SIGN_UP_URL=/sign-up
+NEXT_PUBLIC_CLERK_SIGN_IN_FORCE_REDIRECT_URL=/dashboard
+NEXT_PUBLIC_CLERK_SIGN_UP_FORCE_REDIRECT_URL=/dashboard
+NEXT_PUBLIC_CLERK_AFTER_SIGN_OUT_URL=/sign-in
+
+# ── Database ─────────────────────────────────────────────────────────────────
+# Append &uselibpqcompat=true to silence the Postgres SSL mode warning
+DATABASE_URL=postgres://...?sslmode=require&uselibpqcompat=true
+
+# ── Liveblocks ───────────────────────────────────────────────────────────────
+LIVEBLOCKS_PUBLIC_API_KEY=pk_...
+LIVEBLOCKS_SECRET_KEY=sk_...
+
+# ── AI — Google Gemini ───────────────────────────────────────────────────────
+GOOGLE_GENERATIVE_AI_API_KEY=
+GEMINI_MODEL=gemini-2.5-flash        # optional — this is the default
+
+# ── Voice — Vapi + ElevenLabs ────────────────────────────────────────────────
+NEXT_PUBLIC_VAPI_API_KEY=            # public Vapi key
+NEXT_PUBLIC_ASSISTANT_ID=            # Vapi assistant ID (used by the knowledge voice interface)
+VAPI_SERVER_SECRET=                  # used to verify Vapi webhook calls
+ELEVENLABS_API_KEY=                  # ElevenLabs key (Vapi uses this for persona voices)
+
+# ── Vercel Blob — TWO separate stores ────────────────────────────────────────
+BLOB_READ_WRITE_TOKEN=vercel_blob_rw_...   # Meaning Maps store (public assets, canvas snapshots)
+PDF_BLOB_READ_WRITE_TOKEN=vercel_blob_rw_... # Knowledge document uploads (private store)
+
+# ── Trigger.dev ──────────────────────────────────────────────────────────────
+TRIGGER_SECRET_KEY=tr_...
+TRIGGER_PROJECT_REF=proj_...
+
+# ── App ──────────────────────────────────────────────────────────────────────
+APP_URL=http://localhost:3000
+```
+
+> **Two blob stores:** Knowledge document uploads (PDFs, covers) use `PDF_BLOB_READ_WRITE_TOKEN` — the private store originally from PDF Uploader. General assets use `BLOB_READ_WRITE_TOKEN`. Keeping them separate preserves the correct access-control model from each original project.
+
+---
 
 ## <a name="structure">🗂️ Project Structure</a>
 
 ```
-.
+Meaning Maps/
 ├── app/
-│   ├── api/              # Route handlers (auth, AI, projects, briefs)
-│   ├── editor/           # Knowledge-map editor pages
-│   ├── generated/prisma/ # Generated Prisma client
-│   ├── sign-in/          # Clerk sign-in page
-│   └── sign-up/          # Clerk sign-up page
+│   ├── (hub)/                    ← authenticated hub layout + pages
+│   │   ├── dashboard/            ← overview, stats, AI Copilot
+│   │   ├── knowledge/            ← library, upload, [slug] voice detail
+│   │   ├── documents/            ← list + [id] collaborative editor
+│   │   └── sheets/               ← list + [id] collaborative spreadsheet
+│   ├── editor/                   ← workflow canvas (kept for room-ID compatibility)
+│   ├── api/
+│   │   ├── ai/                   ← copilot, sheet AI, design-agent, knowledge chat
+│   │   ├── knowledge/            ← upload token, CRUD, [id]/summary
+│   │   ├── documents/            ← document CRUD
+│   │   ├── sheets/               ← sheet CRUD
+│   │   ├── liveblocks-auth/      ← Liveblocks token endpoint
+│   │   └── vapi/search-book/     ← Vapi function-calling (grounded knowledge retrieval)
+│   ├── sign-in/ sign-up/         ← Clerk auth pages
+│   └── globals.css               ← Tailwind v4 design tokens + component classes
 ├── components/
-│   ├── editor/           # Canvas UI, sidebar (Map Builder / Chat / Briefs), presence
-│   └── ui/               # Reusable shadcn/ui primitives
-├── context/              # Project source-of-truth docs (read these first)
-├── hooks/                # Custom React hooks (auto-save, shortcuts, project actions)
-├── lib/                  # Shared utilities (Prisma, Liveblocks, access control)
-├── prisma/               # Prisma schema and migrations
-├── trigger/              # Trigger.dev tasks
-│   ├── design-agent.ts   # Sense AI: builds the knowledge map live
-│   └── generate-spec.ts  # Sense AI: generates the knowledge brief
-└── types/                # Shared TypeScript types
+│   ├── knowledge/                ← KnowledgeUploadForm, KnowledgeVapiControls,
+│   │   │                            KnowledgeVoiceSelector, KnowledgeCard, KnowledgeChat
+│   ├── document/                 ← DocumentWorkspace, DocumentEditor, DocumentAiToolbar
+│   ├── sheet/                    ← SheetWorkspace, SheetGrid, SheetAiCopilot
+│   ├── dashboard/                ← DashboardActivityChart, DashboardAiPanel
+│   ├── editor/                   ← Canvas, Sidebar, MapBuilder, Briefs, Presence
+│   ├── app-navbar.tsx            ← Authenticated hub navigation
+│   ├── spline-hero.tsx           ← 3D landing hero (Spline + fallback gradient)
+│   ├── intro-animation.tsx       ← Initial logo reveal animation
+│   ├── theme-provider.tsx        ← next-themes wrapper
+│   └── ui/                       ← shadcn/ui primitives (do not edit directly)
+├── hooks/
+│   ├── useVapi.ts                ← Vapi call lifecycle, streaming transcripts
+│   └── (canvas hooks)            ← autosave, keyboard shortcuts, project actions
+├── lib/
+│   ├── pdf-client.ts             ← Client-side PDF parser (pdfjs-dist, public worker)
+│   ├── knowledge.ts              ← Knowledge ingestion (create doc + segments in DB)
+│   ├── knowledge-constants.ts    ← SME personas, file size/type constants
+│   ├── resources.ts              ← Data access layer (Document, Sheet, KnowledgeDoc)
+│   └── prisma.ts                 ← Prisma client singleton
+├── prisma/
+│   ├── schema.prisma             ← Root schema (includes model files)
+│   ├── models/
+│   │   ├── project.prisma        ← Project, ProjectCollaborator, TaskRun, ProjectSpec
+│   │   └── resources.prisma      ← Document, Sheet, KnowledgeDoc, KnowledgeSegment
+│   └── migrations/               ← Applied migration SQL
+├── trigger/
+│   ├── design-agent.ts           ← Sense AI: builds knowledge map live (Trigger.dev task)
+│   └── generate-spec.ts          ← Sense AI: generates knowledge brief (Trigger.dev task)
+├── context/
+│   ├── architecture-context.md   ← System boundaries and invariants
+│   ├── code-standards.md         ← TypeScript, RSC, and styling rules
+│   ├── ui-context.md             ← Design tokens, theme, component rules
+│   └── ai-workflow-rules.md      ← Spec-driven development approach
+└── public/
+    ├── Six-Sense.png             ← Logo (white on transparent — use invert for light mode)
+    ├── pdf.worker.min.mjs        ← pdfjs-dist worker (served directly from /public)
+    └── (Spline assets)
 ```
+
+---
 
 ## <a name="how-it-works">🧠 How It Works</a>
 
-1. An employee signs in (Clerk) and creates or opens a knowledge-map project.
-2. They open the workspace — a real-time Liveblocks + React Flow canvas — and optionally import a template.
-3. In the **Map Builder** tab they describe a topic; the app triggers the `design-agent` Trigger.dev task.
-4. **Sense AI** (Gemini) decides which nodes and relationships to create, then writes them into the shared room **one at a time**, moving its visible cursor as it goes — so collaborators watch the map build live.
-5. Teammates refine and validate the map together; the canvas auto-saves to Vercel Blob.
-6. From the **Briefs** tab, the `generate-spec` task converts the map into a transparent, evidence-based Markdown knowledge brief, stored in Vercel Blob and linked in PostgreSQL, ready to preview or download.
+### Knowledge Voice Flow
+1. User uploads a PDF. `pdfjs-dist` extracts text client-side (via the `/pdf.worker.min.mjs` public worker) and renders the first page as a cover image.
+2. The file and cover are uploaded to Vercel Blob using `PDF_BLOB_READ_WRITE_TOKEN`.
+3. Parsed text is chunked into 500-word segments (50-word overlap) and saved to `KnowledgeSegment` rows in PostgreSQL.
+4. On the detail page, Gemini generates a summary (cached in `KnowledgeDoc.summary`).
+5. The user starts a Vapi voice call; the Vapi assistant's `searchBook` function hits `/api/vapi/search-book`, which queries `KnowledgeSegment` for relevant text and returns it as grounded context.
+6. The transcript streams in real time; the user can also type instead of speaking.
 
-## Roadmap
+### Workflow AI Flow
+1. User describes a topic in the Map Builder panel.
+2. The `design-agent` Trigger.dev task (runs inline via `/api/ai/design` in dev) calls Gemini to determine which nodes and edges to create.
+3. Nodes are written into Liveblocks Storage one at a time; a live AI cursor moves across the canvas as each node is placed — visible to all collaborators in real time.
+4. From the Briefs panel, `generate-spec` converts the map into a structured Markdown brief, uploaded to Vercel Blob and linked in PostgreSQL.
 
-- **Document ingestion**: combine with a PDF/document uploader so maps can be generated directly from source files.
-- **External front-end integration**: adapt Six Sense into an existing front-end with its own design system.
+### Sheet AI Flow
+1. The Sheet AI Copilot receives the current cell grid as context.
+2. Gemini uses tool calling to return structured cell-write operations.
+3. The UI renders an animated AI cursor that moves across cells as it writes, mirroring the Workflow experience.
+
+---
+
+## Available Scripts
+
+| Command | Description |
+|---------|-------------|
+| `npm run dev` | Start dev server (Turbopack) |
+| `npm run build` | Production build |
+| `npm run start` | Start production server |
+| `npm run lint` | Run ESLint |
+| `npx prisma migrate deploy` | Apply pending migrations |
+| `npx prisma studio` | Open Prisma Studio GUI |
+| `npx trigger.dev@latest deploy` | Deploy Trigger.dev tasks to production |
