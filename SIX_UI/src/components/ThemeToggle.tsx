@@ -2,6 +2,14 @@
 import { Moon, Sun } from 'lucide-react'
 import { useTheme } from '@/components/ThemeProvider'
 
+/**
+ * Renders a square icon button that toggles the application's theme.
+ *
+ * The button shows a Sun icon when the current theme is `"dark"` and a Moon icon otherwise.
+ * Its title is `"Light mode"` when the theme is dark and `"Dark mode"` otherwise.
+ *
+ * @returns A JSX element — a button that toggles the current theme when clicked.
+ */
 export default function ThemeToggle() {
   const { theme, toggleTheme } = useTheme()
   return (

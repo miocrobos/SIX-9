@@ -9,6 +9,17 @@ interface PageTransitionProps {
   onComplete: () => void
 }
 
+/**
+ * Render a full-screen animated page transition overlay.
+ *
+ * Displays a centered icon (with a red boxed variant and wiggle), an italic quote, and runs a 4s animation sequence. Calls `onComplete` exactly once when the transition finishes (either when the overlay animation ends or after the fallback timeout).
+ *
+ * @param Icon - A LucideIcon component used to render the icon graphics.
+ * @param iconColor - Color for the primary icon rendering. Defaults to `#D92525`.
+ * @param quote - Text displayed beneath the animated icon.
+ * @param onComplete - Callback invoked once when the transition completes.
+ * @returns The overlay JSX element for the page transition.
+ */
 export default function PageTransition({
   Icon,
   iconColor = '#D92525',

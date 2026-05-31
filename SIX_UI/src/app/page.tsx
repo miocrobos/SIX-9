@@ -81,6 +81,13 @@ const navLinks = [
 
 const headerNavLinks = navLinks.filter(link => link.label !== 'SIX Note')
 
+/**
+ * Render the landing page containing the hero, stats, features, workflow, footer, and the "Launch the Hub" entry modal.
+ *
+ * Manages local UI state for the header mobile menu, intro animation completion, and expandable hub-entry cards.
+ *
+ * @returns The JSX element for the landing page.
+ */
 export default function LandingPage() {
   const [menuOpen, setMenuOpen] = useState(false)
   const [hubModal, setHubModal] = useState(false)

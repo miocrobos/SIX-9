@@ -119,6 +119,15 @@ const typeColor: Record<string, string> = {
   Methodology: 'bg-[#D92525]/10 text-[#D92525]',
 }
 
+/**
+ * Render an interactive article card that presents key metadata and opens the article detail when clicked.
+ *
+ * Displays the article's type badge, verification state, confidence, title, excerpt, author and department, date, up to three tags, source attributions, and basic metrics (views and helpful percentage).
+ *
+ * @param article - The article object to render
+ * @param onOpen - Callback invoked with `article` when the card is clicked
+ * @returns The JSX element for the article card
+ */
 function ArticleCard({ article, onOpen }: { article: Article; onOpen: (a: Article) => void }) {
   return (
     <Card
@@ -191,6 +200,13 @@ function ArticleCard({ article, onOpen }: { article: Article; onOpen: (a: Articl
   )
 }
 
+/**
+ * Render a modal dialog that displays detailed information for a single article.
+ *
+ * @param article - The article object whose title, metadata, excerpt, sources, tags, and metrics are presented in the modal.
+ * @param onClose - Callback invoked when the dialog is dismissed.
+ * @returns A Dialog element containing the article's details, traceability sources, tags, and action buttons.
+ */
 function ArticleModal({ article, onClose }: { article: Article; onClose: () => void }) {
   return (
     <Dialog open onOpenChange={open => { if (!open) onClose() }}>
@@ -261,6 +277,14 @@ function ArticleModal({ article, onClose }: { article: Article; onClose: () => v
   )
 }
 
+/**
+ * Render the "Knowledge Hub" page containing a searchable, filterable list of articles and an article detail modal.
+ *
+ * The page displays summary stats, a search box, category and type filters, a "verified only" toggle, branch selector,
+ * and a responsive grid of article cards. Selecting a card opens a modal with full details and source traceability.
+ *
+ * @returns The rendered React element for the Knowledge Hub page.
+ */
 export default function TextbookPage() {
   const [search, setSearch] = useState('')
   const [category, setCategory] = useState('All')

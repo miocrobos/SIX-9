@@ -81,6 +81,14 @@ const badges: BadgeItem[] = [
 const periodBtnActive = 'bg-[#D92525] text-white'
 const periodBtnInactive = 'bg-[#F5F5F7] dark:bg-[#111] text-gray-500 hover:text-[#1A1A1A] dark:hover:text-white dark:text-white border border-[#E8E8F0] dark:border-[#2a2a2a]'
 
+/**
+ * Render a visual indicator for a leaderboard rank.
+ *
+ * Shows a crown for rank `1`, a silver medal for rank `2`, a bronze medal for rank `3`, and a bold `#<rank>` text label for all other ranks.
+ *
+ * @param rank - The numeric leaderboard position to represent
+ * @returns A React element displaying the corresponding rank icon or label
+ */
 function RankIcon({ rank }: { rank: number }) {
   if (rank === 1) return <Crown size={16} className="text-[#FFD700]" />
   if (rank === 2) return <Medal size={16} className="text-[#C0C0C0]" />
@@ -88,6 +96,11 @@ function RankIcon({ rank }: { rank: number }) {
   return <span className="text-sm font-bold text-gray-500">#{rank}</span>
 }
 
+/**
+ * Render the leaderboard page with period switching, a top-3 podium, the full rankings list, and a right sidebar showing the current user's stats, contribution breakdown, and badge achievements.
+ *
+ * @returns The React element for the leaderboard page.
+ */
 export default function LeaderboardPage() {
   const [period, setPeriod] = useState<'weekly' | 'monthly' | 'alltime'>('monthly')
 

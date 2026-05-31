@@ -58,6 +58,13 @@ function inlineMd(text: string): string {
     .replace(/`(.*?)`/g, '<code style="background:#f1f1f1;padding:0 3px;border-radius:3px;font-size:11px">$1</code>')
 }
 
+/**
+ * A floating "SIX Knowledge AI" chat widget that provides text (and optional file/voice) input and displays assistant responses with inline Markdown, references, and confidence metadata.
+ *
+ * The component renders a toggleable floating button and, when open, a responsive chat panel with message history, quick-start prompts, attachment preview, speech recognition controls (when supported), and request handling to the `/api/ask` endpoint.
+ *
+ * @returns The rendered chatbox React element.
+ */
 export default function AIChatbox() {
   const [open, setOpen] = useState(false)
   const [messages, setMessages] = useState<Message[]>([])

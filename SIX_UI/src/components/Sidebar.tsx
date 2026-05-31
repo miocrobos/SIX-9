@@ -23,6 +23,13 @@ const sixNoteSubItems = [
   { href: '/sixnote/ask',    label: 'Ask Question',   icon: MessageCircle },
 ]
 
+/**
+ * Renders the fixed left application sidebar containing the logo, user stats, navigation (with nested SIX Note links), connected data sources, and user profile.
+ *
+ * The component uses the current pathname to determine active navigation items and conditionally reveals SIX Note sub-items when the route starts with `/sixnote`.
+ *
+ * @returns The sidebar JSX element ready to be mounted in the layout.
+ */
 export default function Sidebar() {
   const pathname = usePathname()
 
