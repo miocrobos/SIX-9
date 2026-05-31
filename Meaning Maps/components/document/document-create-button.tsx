@@ -21,7 +21,9 @@ export function DocumentCreateButton({ label = "New Document" }: DocumentCreateB
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ name: "Untitled Document" }),
       })
+      if (!res.ok) throw new Error(`${res.status}`)
       const doc = await res.json() as { id: string }
+      if (!doc.id) throw new Error("No id returned")
       router.push(`/documents/${doc.id}`)
     } catch {
       setCreating(false)

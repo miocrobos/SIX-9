@@ -1,11 +1,12 @@
 /**
  * POST /api/knowledge/ask
- * Answers a question grounded in the document's text segments using Anthropic Claude.
+ * Answers a question grounded in the document's text segments using Gemini.
  */
 
 import { auth } from "@clerk/nextjs/server"
 import { NextResponse } from "next/server"
-import Anthropic from "@anthropic-ai/sdk"
+import { createGoogleGenerativeAI } from "@ai-sdk/google"
+import { generateText } from "ai"
 import { searchKnowledgeSegments } from "@/lib/knowledge"
 
 interface AskBody {
@@ -14,14 +15,17 @@ interface AskBody {
   history?: Array<{ role: "user" | "assistant"; content: string }>
 }
 
-const anthropic = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY })
+const GEMINI_API_KEY =
+  process.env.GOOGLE_GEMINI_API_KEY ??
+  process.env.GOOGLE_GENERATIVE_AI_API_KEY ??
+  process.env.GOOGLE_AI_API_KEY
 
 export async function POST(request: Request) {
   const { userId } = await auth()
   if (!userId) return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
 
-  if (!process.env.ANTHROPIC_API_KEY) {
-    return NextResponse.json({ error: "AI not configured" }, { status: 503 })
+  if (!GEMINI_API_KEY) {
+    return NextResponse.json({ error: "AI not configured — add GOOGLE_GEMINI_API_KEY to .env.local" }, { status: 503 })
   }
 
   const { docId, question, history = [] } = (await request.json()) as AskBody
@@ -43,21 +47,22 @@ If the context doesn't contain enough information, say so clearly.
 
 ${context}`
 
-  const messages: Anthropic.MessageParam[] = [
+  const google = createGoogleGenerativeAI({ apiKey: GEMINI_API_KEY })
+
+  // Build messages including history
+  const messages = [
     ...history.map((m) => ({
       role: m.role as "user" | "assistant",
       content: m.content,
     })),
-    { role: "user", content: question },
+    { role: "user" as const, content: question },
   ]
 
-  const response = await anthropic.messages.create({
-    model: "claude-sonnet-4-5",
-    max_tokens: 1024,
+  const { text } = await generateText({
+    model: google(process.env.GEMINI_MODEL ?? "gemini-2.5-flash"),
     system: systemPrompt,
     messages,
   })
 
-  const answer = response.content[0].type === "text" ? response.content[0].text : ""
-  return NextResponse.json({ answer })
+  return NextResponse.json({ answer: text })
 }

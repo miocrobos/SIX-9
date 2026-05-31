@@ -1,5 +1,5 @@
 import { task } from "@trigger.dev/sdk/v3";
-import { createAnthropic } from "@ai-sdk/anthropic";
+import { createGoogleGenerativeAI } from "@ai-sdk/google";
 import { generateText, tool } from "ai";
 import { z } from "zod";
 import { LiveObject } from "@liveblocks/client";
@@ -162,8 +162,8 @@ export const designAgent = task({
   retry: { maxAttempts: 2 },
   run: async (payload: { prompt: string; roomId: string; userId: string; docId?: string }) => {
     const lb = getLiveblocks();
-    const anthropic = createAnthropic({
-      apiKey: process.env.ANTHROPIC_API_KEY ?? "",
+    const google = createGoogleGenerativeAI({
+      apiKey: process.env.GOOGLE_GENERATIVE_AI_API_KEY ?? process.env.GOOGLE_AI_API_KEY ?? process.env.GOOGLE_GEMINI_API_KEY,
     });
 
     await lb
@@ -218,7 +218,7 @@ export const designAgent = task({
       }
 
       const result = await generateText({
-        model: anthropic(process.env.ANTHROPIC_MODEL ?? "claude-sonnet-4-5"),
+        model: google(process.env.GEMINI_MODEL ?? "gemini-2.5-flash"),
         system: buildSystemPrompt(),
         prompt: `User request: ${payload.prompt}\n\n${canvasContext}${knowledgeContext}`,
         tools: canvasTools,

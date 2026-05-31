@@ -1,6 +1,7 @@
 "use client"
 
-import { LayoutTemplate, PanelLeftClose, PanelLeftOpen, Save, Share2, Sparkles } from "lucide-react"
+import Link from "next/link"
+import { LayoutDashboard, LayoutTemplate, PanelLeftClose, PanelLeftOpen, Save, Share2, Sparkles } from "lucide-react"
 import { UserButton } from "@clerk/nextjs"
 import { Button } from "@/components/ui/button"
 import { ThemeToggle } from "@/components/theme-toggle"
@@ -31,12 +32,30 @@ export function EditorNavbar({
 }: EditorNavbarProps) {
   return (
     <header className="flex h-12 shrink-0 items-center justify-between border-b border-border-default bg-bg-surface px-3">
-      <div className="flex min-w-0 items-center gap-3">
-        <Button variant="ghost" size="icon" onClick={onToggle}>
+      <div className="flex min-w-0 items-center gap-2">
+        {/* Hub home link */}
+        <Link
+          href="/dashboard"
+          className="flex items-center justify-center h-8 w-8 rounded-lg text-text-muted hover:text-text-primary hover:bg-bg-subtle transition-colors shrink-0"
+          title="Back to Hub"
+        >
+          <LayoutDashboard className="h-4 w-4" />
+        </Link>
+
+        {/* Six Sense logo */}
+        <Link href="/dashboard" className="flex items-center shrink-0">
+          <div className="h-5 w-5 rounded bg-accent-primary flex items-center justify-center">
+            <span className="text-white font-bold text-[10px] leading-none select-none">S</span>
+          </div>
+        </Link>
+
+        <div className="w-px h-4 bg-border-default mx-1" />
+
+        <Button variant="ghost" size="icon" className="h-8 w-8" onClick={onToggle}>
           {isOpen ? (
-            <PanelLeftClose className="h-5 w-5" />
+            <PanelLeftClose className="h-4 w-4" />
           ) : (
-            <PanelLeftOpen className="h-5 w-5" />
+            <PanelLeftOpen className="h-4 w-4" />
           )}
           <span className="sr-only">Toggle sidebar</span>
         </Button>
@@ -44,7 +63,7 @@ export function EditorNavbar({
         {projectName ? (
           <div className="min-w-0">
             <p className="truncate text-sm font-medium text-text-primary">{projectName}</p>
-            <p className="text-xs text-text-faint">Workspace</p>
+            <p className="text-xs text-text-faint">Workflow</p>
           </div>
         ) : null}
       </div>

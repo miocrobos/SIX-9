@@ -1,7 +1,7 @@
 "use client"
 
-import { useCallback, useState } from "react"
-import { useStorage, useMutation, useOthers, useSelf } from "@liveblocks/react"
+import { useCallback, useEffect, useMemo, useState } from "react"
+import { useMutation, useOthers, useSelf, useStorage } from "@liveblocks/react"
 import type { LiveMap } from "@liveblocks/client"
 import { cn } from "@/lib/utils"
 
@@ -11,14 +11,9 @@ const COL_LABELS = Array.from({ length: COLS }, (_, i) =>
   String.fromCharCode(65 + i)
 )
 const COL_WIDTH = 120
-const ROW_HEIGHT = 32
 
 function cellKey(row: number, col: number) {
   return `${row}:${col}`
-}
-
-function rowLabel(row: number) {
-  return String(row + 1)
 }
 
 interface CellData {
@@ -35,7 +30,27 @@ interface CellComment {
   [key: string]: string
 }
 
-export function SheetGrid() {
+/**
+ * Safely convert a Liveblocks storage value to a plain Record.
+ * Handles ReadonlyMap (Liveblocks v3), Map, and plain objects.
+ */
+function toRecord<V>(
+  mapLike: ReadonlyMap<string, V> | Record<string, V> | null | undefined
+): Record<string, V> {
+  if (!mapLike) return {}
+  if (typeof (mapLike as ReadonlyMap<string, V>).entries === "function") {
+    return Object.fromEntries(
+      (mapLike as ReadonlyMap<string, V>).entries()
+    ) as Record<string, V>
+  }
+  return mapLike as Record<string, V>
+}
+
+interface SheetGridProps {
+  onCellsChange?: (cells: Record<string, { value: string }>) => void
+}
+
+export function SheetGrid({ onCellsChange }: SheetGridProps = {}) {
   const [selected, setSelected] = useState<{ row: number; col: number } | null>(null)
   const [editing, setEditing] = useState<{ row: number; col: number } | null>(null)
   const [editValue, setEditValue] = useState("")
@@ -44,16 +59,21 @@ export function SheetGrid() {
   const others = useOthers()
   const me = useSelf()
 
-  // Read cells from Liveblocks storage
-  const cells = useStorage(
-    (root) => root.sheetCells as LiveMap<string, CellData> | undefined
-  )
-  const comments = useStorage(
-    (root) => root.sheetComments as LiveMap<string, CellComment> | undefined
-  )
+  // Pull raw storage — convert to plain Record to avoid .get() issues
+  const rawCells = useStorage((root) => root.sheetCells as LiveMap<string, CellData> | undefined)
+  const rawComments = useStorage((root) => root.sheetComments as LiveMap<string, CellComment> | undefined)
+
+  const cells = useMemo(() => toRecord(rawCells as unknown as ReadonlyMap<string, CellData> | null), [rawCells])
+  const comments = useMemo(() => toRecord(rawComments as unknown as ReadonlyMap<string, CellComment> | null), [rawComments])
+
+  // Notify parent of cell changes so AI copilot can read them
+  useEffect(() => {
+    onCellsChange?.(cells as Record<string, { value: string }>)
+  }, [cells, onCellsChange])
 
   const updateCell = useMutation(({ storage }, row: number, col: number, value: string) => {
     const map = storage.get("sheetCells") as LiveMap<string, CellData>
+    if (!map) return
     if (value === "") {
       map.delete(cellKey(row, col))
     } else {
@@ -64,6 +84,7 @@ export function SheetGrid() {
   const addComment = useMutation(
     ({ storage }, key: string, author: string, text: string) => {
       const map = storage.get("sheetComments") as LiveMap<string, CellComment>
+      if (!map) return
       map.set(key, { cellKey: key, author, text, timestamp: new Date().toISOString() })
     },
     []
@@ -79,7 +100,7 @@ export function SheetGrid() {
 
   const handleCellDoubleClick = (row: number, col: number) => {
     const key = cellKey(row, col)
-    const val = cells?.get(key)?.value ?? ""
+    const val = cells[key]?.value ?? ""
     setEditing({ row, col })
     setEditValue(val)
   }
@@ -102,16 +123,8 @@ export function SheetGrid() {
     }
   }
 
-  // Compute other users' selected cells for presence indicators
-  const otherPresence = others.map((o) => ({
-    cursor: o.presence.cursor as { x: number; y: number } | null,
-    color: (o.info as { color?: string } | undefined)?.color ?? "#D92525",
-    name: (o.info as { name?: string } | undefined)?.name ?? "Anonymous",
-  }))
-
   return (
     <div className="flex flex-col h-full overflow-hidden">
-      {/* Spreadsheet */}
       <div className="flex-1 overflow-auto">
         <table
           className="border-collapse text-xs"
@@ -119,7 +132,6 @@ export function SheetGrid() {
           role="grid"
         >
           <colgroup>
-            {/* Row header col */}
             <col style={{ width: 40 }} />
             {COL_LABELS.map((l) => (
               <col key={l} style={{ width: COL_WIDTH }} />
@@ -130,7 +142,7 @@ export function SheetGrid() {
           <thead>
             <tr>
               <th className="sticky top-0 left-0 z-20 bg-bg-elevated border-r border-b border-border-default h-8 text-center text-text-faint select-none" />
-              {COL_LABELS.map((label, col) => (
+              {COL_LABELS.map((label) => (
                 <th
                   key={label}
                   className="sticky top-0 z-10 bg-bg-elevated border-r border-b border-border-default h-8 text-center font-semibold text-text-muted select-none"
@@ -143,10 +155,10 @@ export function SheetGrid() {
 
           <tbody>
             {Array.from({ length: ROWS }, (_, row) => (
-              <tr key={row} style={{ height: ROW_HEIGHT }}>
+              <tr key={row} style={{ height: 32 }}>
                 {/* Row header */}
-                <td className="sticky left-0 z-10 bg-bg-elevated border-r border-b border-border-default text-center text-text-faint select-none font-medium">
-                  {rowLabel(row)}
+                <td className="sticky left-0 z-10 bg-bg-elevated border-r border-b border-border-default text-center text-text-faint select-none font-medium text-xs">
+                  {row + 1}
                 </td>
 
                 {/* Data cells */}
@@ -154,8 +166,8 @@ export function SheetGrid() {
                   const key = cellKey(row, col)
                   const isSelected = selected?.row === row && selected?.col === col
                   const isEditing = editing?.row === row && editing?.col === col
-                  const value = cells?.get(key)?.value ?? ""
-                  const hasComment = Boolean(comments?.get(key))
+                  const value = cells[key]?.value ?? ""
+                  const hasComment = Boolean(comments[key])
 
                   return (
                     <td
@@ -186,7 +198,6 @@ export function SheetGrid() {
                         </span>
                       )}
 
-                      {/* Comment indicator */}
                       {hasComment && (
                         <div className="absolute top-0 right-0 w-0 h-0 border-l-[6px] border-l-transparent border-t-[6px] border-t-accent-primary pointer-events-none" />
                       )}
@@ -225,7 +236,8 @@ export function SheetGrid() {
               type="button"
               onClick={() => {
                 if (commentText.trim()) {
-                  addComment(commentCell, me?.info ? (me.info as { name?: string }).name ?? "You" : "You", commentText.trim())
+                  const name = me?.info ? (me.info as { name?: string }).name ?? "You" : "You"
+                  addComment(commentCell, name, commentText.trim())
                   setCommentCell(null)
                   setCommentText("")
                 }

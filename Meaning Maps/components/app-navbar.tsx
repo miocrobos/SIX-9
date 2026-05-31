@@ -3,22 +3,24 @@
 import Link from "next/link"
 import { usePathname } from "next/navigation"
 import { UserButton } from "@clerk/nextjs"
-import { Bell, FileText, GitBranch, LayoutDashboard, Table2 } from "lucide-react"
+import { Bell, BookOpen, FileText, GitBranch, LayoutDashboard, Table2 } from "lucide-react"
 import { ThemeToggle } from "@/components/theme-toggle"
 import { cn } from "@/lib/utils"
 
 const tabs = [
-  { label: "Document",  href: "/documents",  icon: FileText        },
   { label: "Workflow",  href: "/editor",      icon: GitBranch       },
-  { label: "Sheet",     href: "/sheets",      icon: Table2          },
   { label: "Dashboard", href: "/dashboard",   icon: LayoutDashboard },
+  { label: "Sheet",     href: "/sheets",      icon: Table2          },
+  { label: "Knowledge", href: "/knowledge",   icon: BookOpen        },
+  { label: "Document",  href: "/documents",   icon: FileText        },
 ]
 
 function useActiveTab(pathname: string) {
-  if (pathname.startsWith("/documents")) return "/documents"
   if (pathname.startsWith("/editor"))    return "/editor"
-  if (pathname.startsWith("/sheets"))    return "/sheets"
   if (pathname.startsWith("/dashboard")) return "/dashboard"
+  if (pathname.startsWith("/sheets"))    return "/sheets"
+  if (pathname.startsWith("/knowledge")) return "/knowledge"
+  if (pathname.startsWith("/documents")) return "/documents"
   return null
 }
 

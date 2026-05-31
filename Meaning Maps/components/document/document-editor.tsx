@@ -30,8 +30,13 @@ export function DocumentEditor({ documentId, documentName }: DocumentEditorProps
     immediatelyRender: false,
     extensions: [
       liveblocks,
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      (StarterKit as any).configure({ history: false }), // Liveblocks handles undo/redo
+      StarterKit.configure({
+        // Liveblocks provides its own collaborative undo/redo via Yjs
+        // @ts-expect-error — valid at runtime; StarterKit types may not expose this option
+        history: false,
+        // StarterKit bundles Underline by default; disable here and register once below
+        underline: false,
+      }),
       Underline,
       Placeholder.configure({
         placeholder: "Start writing your document…",

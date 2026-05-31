@@ -21,7 +21,9 @@ export function SheetCreateButton({ label = "New Sheet" }: SheetCreateButtonProp
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ name: "Untitled Sheet" }),
       })
+      if (!res.ok) throw new Error(`${res.status}`)
       const sheet = await res.json() as { id: string }
+      if (!sheet.id) throw new Error("No id returned")
       router.push(`/sheets/${sheet.id}`)
     } catch {
       setCreating(false)

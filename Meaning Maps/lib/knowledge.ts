@@ -98,11 +98,14 @@ export async function getOrCreateDocSummary(
   })
   if (doc?.summary) return doc.summary
 
-  const apiKey = process.env.GOOGLE_GEMINI_API_KEY ?? process.env.GOOGLE_GENERATIVE_AI_API_KEY
+  const apiKey =
+    process.env.GOOGLE_GEMINI_API_KEY ??
+    process.env.GOOGLE_GENERATIVE_AI_API_KEY ??
+    process.env.GOOGLE_AI_API_KEY
   if (!apiKey) return "Summary unavailable — AI key not configured."
 
   const genAI = new GoogleGenerativeAI(apiKey)
-  const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash" })
+  const model = genAI.getGenerativeModel({ model: process.env.GEMINI_MODEL ?? "gemini-2.5-flash" })
 
   const excerpt = segments.slice(0, 5).join("\n\n").slice(0, 8000)
   const prompt = `Summarize this document in 2-3 concise sentences for a knowledge management system. Focus on what the document is about, its main purpose, and key takeaways.\n\n${excerpt}`
