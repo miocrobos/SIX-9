@@ -104,6 +104,15 @@ function RankIcon({ rank }: { rank: number }) {
   return <Medal size={18} className="text-[#CD7F32]" />
 }
 
+/**
+ * Render the Know Game page for selecting game modes, viewing stats, leaderboard, and recent games.
+ *
+ * Renders a one-time PageTransition overlay before showing the main UI, a grid of selectable game mode cards
+ * (with locked states and a persistent selection), a start button that navigates to the play route with the
+ * current mode as a query parameter, and sidebar cards for top players, recent game results, and the SIX Note callout.
+ *
+ * @returns A React element representing the Know Game page.
+ */
 export default function KnowGamePage() {
   const [selected, setSelected] = useState('quick')
   const [transitionDone, setTransitionDone] = useState(false)

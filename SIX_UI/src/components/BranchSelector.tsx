@@ -11,6 +11,13 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
 
+/**
+ * Renders a dropdown allowing the user to choose a SIX Group branch and navigates to that branch's page.
+ *
+ * The menu is populated from SIX_BRANCHES and displays each branch's flag, city, and name. Selecting an entry navigates to `/branch/{code}` (lowercased).
+ *
+ * @returns A React element containing the branch selection dropdown; selecting an item navigates to the corresponding branch route.
+ */
 export default function BranchSelector() {
   const router = useRouter()
 

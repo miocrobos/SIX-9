@@ -14,6 +14,12 @@ export const metadata: Metadata = {
   description: 'AI-enabled organizational knowledge management platform',
 }
 
+/**
+ * Root layout component that defines the document HTML/body, applies the Inter font variable to the body class, injects a small script to apply a saved theme before first paint, and wraps the page content with the ThemeProvider.
+ *
+ * @param children - Page content to render inside the ThemeProvider.
+ * @returns The top-level HTML structure for the application containing the themed body and provided children.
+ */
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en" suppressHydrationWarning>

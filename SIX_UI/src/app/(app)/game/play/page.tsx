@@ -278,6 +278,16 @@ const modeConfigs = {
 type ModeKey = keyof typeof modeConfigs
 type Phase = 'intro' | 'playing' | 'results'
 
+/**
+ * Render the mode-configurable quiz gameplay UI and manage its state and lifecycle.
+ *
+ * Presents an intro, timed question-playing interface, and results summary based on the
+ * selected `mode` query parameter. Handles question selection, scoring, streaks, lives,
+ * per-question timer, progression to results, and restarting the game.
+ *
+ * @returns The React element that renders the gameplay screens (intro, playing, and results)
+ * for the selected mode configuration.
+ */
 function GamePlayContent() {
   const searchParams = useSearchParams()
   const modeKey = (searchParams.get('mode') ?? 'quick') as ModeKey
@@ -563,6 +573,13 @@ function GamePlayContent() {
   )
 }
 
+/**
+ * Renders the Know Game gameplay UI wrapped in a Suspense boundary.
+ *
+ * The Suspense fallback displays a loading message while the game content is being prepared.
+ *
+ * @returns The gameplay page element with a loading fallback shown when the content is not yet ready.
+ */
 export default function GamePlayPage() {
   return (
     <Suspense fallback={<div className="p-8 text-center text-gray-500">Loading game...</div>}>

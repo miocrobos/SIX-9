@@ -16,6 +16,13 @@ const sources = [
 type UploadFile = { name: string; size: number; type: string }
 type Phase = 'form' | 'uploading' | 'success'
 
+/**
+ * Render the "Upload Information" page that collects metadata and files, simulates upload/processing progress, and displays a success confirmation.
+ *
+ * The component manages local form state (files, title, department, content type, sources, tags, verification toggle), supports drag-and-drop and file-picker selection, validates required fields, simulates upload progress after submission, and shows a success summary with controls to reset the form or return to SIX Note.
+ *
+ * @returns The rendered Upload Information page as a React element.
+ */
 export default function UploadPage() {
   const [files, setFiles] = useState<UploadFile[]>([])
   const [dragging, setDragging] = useState(false)

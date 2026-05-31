@@ -26,6 +26,13 @@ function sourceIcon(src: string) {
   return <FileText size={11} className="text-amber-500" />
 }
 
+/**
+ * Renders a clickable card for a single branch note that shows its type, title, excerpt, author meta, sources, and verification state.
+ *
+ * @param note - The BranchNote to display (type, title, excerpt, author, date, verified flag, sources, etc.).
+ * @param onOpen - Callback invoked with `note` when the card is clicked to open the note detail modal.
+ * @returns The JSX element for the note card.
+ */
 function NoteCard({ note, onOpen }: { note: BranchNote; onOpen: (n: BranchNote) => void }) {
   return (
     <div
@@ -151,6 +158,14 @@ function NoteModal({ note, onClose }: { note: BranchNote; onClose: () => void })
   )
 }
 
+/**
+ * Render the branch details page with metadata, filterable notes list, and a note detail modal.
+ *
+ * Loads the branch identified by the route `params.code`, manages the active filter and open-note state,
+ * shows a fallback UI when the branch is not found, and renders notes (with filtering and a modal for details).
+ *
+ * @returns The JSX element for the branch page.
+ */
 export default function BranchPage() {
   const params = useParams()
   const router = useRouter()

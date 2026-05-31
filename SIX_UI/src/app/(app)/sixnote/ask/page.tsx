@@ -129,6 +129,17 @@ function renderMarkdown(text: string) {
   return elements
 }
 
+/**
+ * Convert a short inline-markdown string to an HTML fragment supporting bold, italic, and inline code.
+ *
+ * Supports:
+ * - `**bold**` → `<strong>` with styling,
+ * - `*italic*` → `<em>`,
+ * - `` `code` `` → `<code>` with styling.
+ *
+ * @param text - The input string containing inline markdown
+ * @returns An HTML string with inline markdown replaced by corresponding HTML elements
+ */
 function inlineMd(text: string): string {
   return text
     .replace(/\*\*(.*?)\*\*/g, '<strong class="text-[#1A1A1A] dark:text-white font-semibold">$1</strong>')
@@ -136,7 +147,13 @@ function inlineMd(text: string): string {
     .replace(/`(.*?)`/g, '<code class="bg-gray-100 px-1 py-0.5 rounded text-xs font-mono text-[#D92525]">$1</code>')
 }
 
-/* ── Main page ───────────────────────────────────────────── */
+/**
+ * Renders the Ask Question page: a chat-style UI for querying the SIX knowledge base with text, optional file attachments, and voice input.
+ *
+ * The component manages message history, file selection and preview, speech recognition, loading state, per-message feedback, and displays assistant responses with rendered Markdown, references, and confidence checks.
+ *
+ * @returns The React element for the Ask Question page.
+ */
 export default function AskPage() {
   const [messages, setMessages] = useState<Message[]>([])
   const [input, setInput] = useState('')

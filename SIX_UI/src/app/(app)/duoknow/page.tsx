@@ -105,6 +105,18 @@ const paths: { category: string; color: string; nodes: PathNode[] }[] = [
   },
 ]
 
+/**
+ * Render an interactive node tile with icon, status badges, labels, and an optional detail panel.
+ *
+ * The card displays the node's icon (or a lock), title and subtitle, and overlays for completed or active states.
+ * When `selected` is true and the node is not locked, a detail panel is shown with description, XP, progress,
+ * source, and action buttons to open the textbook or jump into the game.
+ *
+ * @param node - The learning node to render (identity, content, progress, and UI metadata)
+ * @param onSelect - Callback invoked with `node` when the card is clicked (not called for locked nodes)
+ * @param selected - Whether the node's detail panel should be displayed
+ * @returns The JSX element for the node card
+ */
 function NodeCard({ node, onSelect, selected }: { node: PathNode; onSelect: (n: PathNode) => void; selected: boolean }) {
   const isCompleted = node.status === 'completed'
   const isActive = node.status === 'active'
@@ -183,6 +195,13 @@ function NodeCard({ node, onSelect, selected }: { node: PathNode; onSelect: (n: 
   )
 }
 
+/**
+ * Render the DuoKnow learning dashboard with header stats, expandable learning paths, node cards with detail popovers, and bottom CTAs.
+ *
+ * The page shows an initial transition overlay until it completes, a responsive stats bar, a list of categorized paths that can be expanded to reveal horizontally scrollable nodes, per-path progress and a continue banner for active nodes, and links to the textbook and leaderboard.
+ *
+ * @returns The DuoKnow page React element.
+ */
 export default function DuoKnowPage() {
   const [selectedNode, setSelectedNode] = useState<PathNode | null>(null)
   const [expandedPath, setExpandedPath] = useState<string | null>('Legal & Compliance')

@@ -66,6 +66,11 @@ const deptCoverage = [
   { dept: 'IT & Architecture', pct: 55, indicator: 'bg-[#FF4B4B]' },
 ]
 
+/**
+ * Renders the dashboard layout containing the header, search input, stats grid, quick-access cards, recent activity, and department knowledge coverage.
+ *
+ * @returns The React element for the dashboard page composed of summary cards, quick actions, recent updates, and progress indicators.
+ */
 export default function DashboardPage() {
   return (
     <div className="p-4 md:p-8 max-w-6xl mx-auto">

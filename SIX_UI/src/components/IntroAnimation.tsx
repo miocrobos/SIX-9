@@ -6,6 +6,12 @@ interface IntroAnimationProps {
   onComplete: () => void
 }
 
+/**
+ * Render a full-screen intro overlay that plays coordinated CSS animations for the logo, red box, and tagline, then signals completion.
+ *
+ * @param onComplete - Callback invoked when the intro period finishes (scheduled ~3400ms after animation start)
+ * @returns A full-screen overlay React element containing the animated logo stack and tagline
+ */
 export default function IntroAnimation({ onComplete }: IntroAnimationProps) {
   const overlayRef  = useRef<HTMLDivElement>(null)
   const logoRef     = useRef<HTMLDivElement>(null)

@@ -32,6 +32,14 @@ const sixNoteSubItems = [
   { href: '/sixnote/ask',    label: 'Ask Question', icon: MessageCircle },
 ]
 
+/**
+ * Render the mobile bottom tab bar and a slide-in left drawer containing additional navigation and user info.
+ *
+ * The component tracks the current pathname to apply active styles, closes the drawer on route changes,
+ * and disables body scrolling while the drawer is open.
+ *
+ * @returns The mobile navigation React element containing the bottom tab bar and the optional slide-in drawer panel.
+ */
 export default function MobileNav() {
   const pathname = usePathname()
   const [drawerOpen, setDrawerOpen] = useState(false)

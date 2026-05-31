@@ -1,4 +1,4 @@
-﻿'use client'
+'use client'
 import Image from 'next/image'
 import Link from 'next/link'
 import { usePathname, useRouter } from 'next/navigation'
@@ -19,6 +19,15 @@ const duoKnowNavItems = [
   { href: '/game',        label: 'Know Game', icon: Gamepad2 },
 ]
 
+/**
+ * Render the top application header with navigation, mode switching, and theme controls.
+ *
+ * The header is sticky and includes a back button, brand logo, a desktop-only mode-specific
+ * navigation, responsive right-side controls that change based on the current mode
+ * (Six Note vs DuoKnow), and a theme toggle.
+ *
+ * @returns The header element containing navigation links, mode-switch controls, badges, and the theme toggle.
+ */
 export default function AppHeader() {
   const pathname = usePathname()
   const router = useRouter()

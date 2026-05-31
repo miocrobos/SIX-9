@@ -24,6 +24,15 @@ const stats: Stat[] = [
   { label: 'Contributors', value: '86', icon: Users, color: 'text-[#D92525]' },
 ]
 
+/**
+ * Render the SIX Note dashboard page, including stats, upload/ask CTAs, recent activity, and cross-links.
+ *
+ * The component shows an initial page transition until completion, then displays the main UI with
+ * stat cards, primary call-to-action panels (Upload Information and Ask Question), a Recent Activity
+ * list, and quick cross-links.
+ *
+ * @returns The JSX element representing the SIX Note page.
+ */
 export default function SixNotePage() {
   const [transitionDone, setTransitionDone] = useState(false)
 
