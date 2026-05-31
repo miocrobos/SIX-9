@@ -1,22 +1,26 @@
 "use client"
 
+/**
+ * Knowledge upload form.
+ *
+ * Intentionally does NO client-side parsing — pdfjs-dist v5 breaks in
+ * Turbopack's browser bundle (ReadableStream incompatibility).  Instead:
+ *  1. Upload the raw file to Vercel Blob directly from the browser.
+ *  2. POST the resulting URL + metadata to /api/knowledge.
+ *  3. The server downloads the file and does all text extraction there
+ *     (pdf-parse for PDFs, mammoth for Word, xlsx for Excel).
+ */
+
 import { useCallback, useRef, useState } from "react"
 import { useRouter } from "next/navigation"
 import { upload } from "@vercel/blob/client"
 import { FileSpreadsheet, FileText, FileType, Loader2, Upload, X } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
-import { splitIntoSegments } from "@/lib/pdf-utils"
 
 // ─── Accepted file types ─────────────────────────────────────────────────────
 
-const ACCEPTED_TYPES = {
-  "application/pdf": ".pdf",
-  "application/vnd.openxmlformats-officedocument.wordprocessingml.document": ".docx",
-  "application/msword": ".doc",
-  "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet": ".xlsx",
-  "application/vnd.ms-excel": ".xls",
-}
+const ACCEPTED = ".pdf,.docx,.doc,.xlsx,.xls"
 
 type DocType = "pdf" | "word" | "excel" | "unknown"
 
@@ -24,111 +28,28 @@ function detectDocType(file: File): DocType {
   const ext = file.name.split(".").pop()?.toLowerCase()
   if (file.type === "application/pdf" || ext === "pdf") return "pdf"
   if (
-    file.type === "application/vnd.openxmlformats-officedocument.wordprocessingml.document" ||
+    file.type.includes("wordprocessingml") ||
     file.type === "application/msword" ||
-    ext === "docx" ||
-    ext === "doc"
+    ext === "docx" || ext === "doc"
   )
     return "word"
   if (
-    file.type === "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" ||
+    file.type.includes("spreadsheetml") ||
     file.type === "application/vnd.ms-excel" ||
-    ext === "xlsx" ||
-    ext === "xls"
+    ext === "xlsx" || ext === "xls"
   )
     return "excel"
   return "unknown"
 }
 
 function fileIcon(type: DocType) {
-  if (type === "pdf") return <FileText className="h-5 w-5 shrink-0 text-accent-primary" />
+  if (type === "pdf")   return <FileText       className="h-5 w-5 shrink-0 text-accent-primary" />
   if (type === "excel") return <FileSpreadsheet className="h-5 w-5 shrink-0 text-green-500" />
   return <FileType className="h-5 w-5 shrink-0 text-blue-500" />
 }
 
 function cleanTitle(filename: string) {
-  return filename
-    .replace(/\.(pdf|docx|doc|xlsx|xls)$/i, "")
-    .replace(/[-_]/g, " ")
-}
-
-// ─── Document parsers ─────────────────────────────────────────────────────────
-
-interface ParsedDoc {
-  segments: string[]
-  /** Rendered cover as a browser Blob (for PDF), or null. Kept separate from body. */
-  coverBlob: Blob | null
-}
-
-async function parsePdf(file: File): Promise<ParsedDoc> {
-  const pdfjsLib = await import("pdfjs-dist")
-
-  // Use unpkg CDN — always matches the exact installed version, no bundler issues
-  pdfjsLib.GlobalWorkerOptions.workerSrc =
-    `https://unpkg.com/pdfjs-dist@${pdfjsLib.version}/build/pdf.worker.min.mjs`
-
-  // Convert to ArrayBuffer first — avoids ReadableStream issues with some browsers
-  const arrayBuffer = await file.arrayBuffer()
-  // Pass as Uint8Array; pdfjs v5 accepts TypedArray
-  const loadingTask = pdfjsLib.getDocument({ data: new Uint8Array(arrayBuffer) })
-  const pdfDoc = await loadingTask.promise
-
-  let coverBlob: Blob | null = null
-  try {
-    const page = await pdfDoc.getPage(1)
-    const viewport = page.getViewport({ scale: 0.75 })
-    const canvas = document.createElement("canvas")
-    canvas.width = viewport.width
-    canvas.height = viewport.height
-    const ctx = canvas.getContext("2d")!
-    // pdfjs v5 render — canvas is passed as canvasContext target
-    await (page.render as (p: Record<string, unknown>) => { promise: Promise<void> })({
-      canvasContext: ctx,
-      viewport,
-    }).promise
-    coverBlob = await new Promise<Blob | null>((resolve) =>
-      canvas.toBlob((b) => resolve(b), "image/jpeg", 0.80)
-    )
-  } catch {
-    // Cover is decorative — skip silently
-  }
-
-  let fullText = ""
-  for (let i = 1; i <= pdfDoc.numPages; i++) {
-    const page = await pdfDoc.getPage(i)
-    const content = await page.getTextContent()
-    fullText += content.items.map((item) => ("str" in item ? item.str : "")).join(" ") + "\n"
-  }
-
-  return { segments: splitIntoSegments(fullText), coverBlob }
-}
-
-async function parseWord(file: File): Promise<ParsedDoc> {
-  const mammoth = await import("mammoth")
-  const arrayBuffer = await file.arrayBuffer()
-  const result = await mammoth.extractRawText({ arrayBuffer })
-  return { segments: splitIntoSegments(result.value), coverBlob: null }
-}
-
-async function parseExcel(file: File): Promise<ParsedDoc> {
-  const XLSX = await import("xlsx")
-  const arrayBuffer = await file.arrayBuffer()
-  const workbook = XLSX.read(arrayBuffer, { type: "array" })
-  const lines: string[] = []
-  for (const sheetName of workbook.SheetNames) {
-    const sheet = workbook.Sheets[sheetName]
-    const csv = XLSX.utils.sheet_to_csv(sheet)
-    lines.push(`[Sheet: ${sheetName}]\n${csv}`)
-  }
-  return { segments: splitIntoSegments(lines.join("\n\n")), coverBlob: null }
-}
-
-async function parseDocument(file: File): Promise<ParsedDoc> {
-  const type = detectDocType(file)
-  if (type === "pdf") return parsePdf(file)
-  if (type === "word") return parseWord(file)
-  if (type === "excel") return parseExcel(file)
-  throw new Error("Unsupported file type")
+  return filename.replace(/\.(pdf|docx|doc|xlsx|xls)$/i, "").replace(/[-_]/g, " ")
 }
 
 // ─── Component ────────────────────────────────────────────────────────────────
@@ -136,12 +57,12 @@ async function parseDocument(file: File): Promise<ParsedDoc> {
 export function KnowledgeUploadForm() {
   const router = useRouter()
   const fileRef = useRef<HTMLInputElement>(null)
-  const [file, setFile] = useState<File | null>(null)
-  const [title, setTitle] = useState("")
-  const [author, setAuthor] = useState("")
+  const [file, setFile]       = useState<File | null>(null)
+  const [title, setTitle]     = useState("")
+  const [author, setAuthor]   = useState("")
   const [uploading, setUploading] = useState(false)
-  const [progress, setProgress] = useState("")
-  const [error, setError] = useState<string | null>(null)
+  const [progress, setProgress]   = useState("")
+  const [error, setError]         = useState<string | null>(null)
 
   const acceptFile = useCallback(
     (f: File) => {
@@ -180,77 +101,38 @@ export function KnowledgeUploadForm() {
     setUploading(true)
 
     try {
-      // Step 1: parse document client-side
-      setProgress("Parsing document…")
-      let segments: string[] = []
-      let coverBlob: Blob | null = null
-      try {
-        const parsed = await parseDocument(file)
-        segments = parsed.segments
-        coverBlob = parsed.coverBlob
-      } catch (parseErr) {
-        throw new Error(`Parsing failed: ${(parseErr as Error).message}`)
-      }
-
-      // Step 2: upload the document file to Vercel Blob
+      // Step 1 — upload raw file to Vercel Blob (no parsing here)
       setProgress("Uploading file…")
-      let fileUrl = ""
-      let fileBlobKey = ""
-      try {
-        const blobResult = await upload(title.trim(), file, {
-          access: "public",
-          handleUploadUrl: "/api/knowledge/upload",
-          contentType: file.type || "application/octet-stream",
-        })
-        fileUrl = blobResult.url
-        fileBlobKey = blobResult.pathname
-      } catch (blobErr) {
-        throw new Error(`File upload failed: ${(blobErr as Error).message}`)
-      }
+      const blobResult = await upload(title.trim(), file, {
+        access: "public",
+        handleUploadUrl: "/api/knowledge/upload",
+        contentType: file.type || "application/octet-stream",
+      })
 
-      // Step 3: upload cover to Vercel Blob separately
-      let coverUrl: string | undefined
-      if (coverBlob) {
-        setProgress("Uploading cover…")
-        try {
-          const coverFile = new File([coverBlob], `${title.trim()}-cover.jpg`, { type: "image/jpeg" })
-          const coverBlobResult = await upload(coverFile.name, coverFile, {
-            access: "public",
-            handleUploadUrl: "/api/knowledge/upload",
-            contentType: "image/jpeg",
-          })
-          coverUrl = coverBlobResult.url
-        } catch {
-          // Cover upload failing is non-critical
-        }
-      }
-
-      // Step 4: save metadata + segments to DB
-      setProgress("Saving to database…")
+      // Step 2 — send URL + metadata to server; server parses and saves
+      setProgress("Processing document…")
       const res = await fetch("/api/knowledge", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          title: title.trim(),
-          author: author.trim() || "Unknown",
-          fileUrl,
-          fileBlobKey,
-          coverUrl,
-          fileSize: file.size,
-          fileType: detectDocType(file),
-          segments,
+          title:       title.trim(),
+          author:      author.trim() || "Unknown",
+          fileUrl:     blobResult.url,
+          fileBlobKey: blobResult.pathname,
+          fileSize:    file.size,
+          fileType:    detectDocType(file),
         }),
       })
 
       if (!res.ok) {
         const text = await res.text()
-        throw new Error(`Save failed (${res.status}): ${text}`)
+        throw new Error(`Server error (${res.status}): ${text}`)
       }
 
       router.push("/knowledge")
       router.refresh()
     } catch (err) {
-      setError((err as Error).message)
+      setError((err as Error).message ?? "Upload failed")
     } finally {
       setUploading(false)
       setProgress("")
@@ -275,7 +157,7 @@ export function KnowledgeUploadForm() {
         <input
           ref={fileRef}
           type="file"
-          accept=".pdf,.docx,.doc,.xlsx,.xls"
+          accept={ACCEPTED}
           className="hidden"
           onChange={handleFileChange}
         />
@@ -302,51 +184,46 @@ export function KnowledgeUploadForm() {
           </div>
         ) : (
           <div className="flex flex-col items-center gap-3">
-            <div className="h-12 w-12 rounded-xl bg-bg-elevated flex items-center justify-center">
-              <Upload className="h-6 w-6 text-text-muted" />
-            </div>
+            <Upload className="h-8 w-8 text-text-muted" />
             <div>
-              <p className="text-sm font-medium text-text-primary">Drop a file here</p>
-              <p className="text-xs text-text-muted mt-1">
-                PDF, Word (.docx), or Excel (.xlsx) — max 50 MB
-              </p>
+              <p className="text-sm font-medium text-text-primary">Drop your document here</p>
+              <p className="text-xs text-text-muted mt-1">PDF, Word (.docx), or Excel (.xlsx)</p>
             </div>
           </div>
         )}
       </div>
 
       {/* Metadata */}
-      <div className="space-y-3">
+      <div className="space-y-4">
         <div>
-          <label className="block text-sm font-medium text-text-primary mb-1.5">
+          <label className="text-sm font-medium text-text-primary block mb-1.5">
             Title <span className="text-accent-primary">*</span>
           </label>
           <Input
             value={title}
             onChange={(e) => setTitle(e.target.value)}
-            placeholder="e.g. Regulatory Navigator 2026"
+            placeholder="Document title"
             required
           />
         </div>
         <div>
-          <label className="block text-sm font-medium text-text-primary mb-1.5">
-            Author / Source
-          </label>
+          <label className="text-sm font-medium text-text-primary block mb-1.5">Author</label>
           <Input
             value={author}
             onChange={(e) => setAuthor(e.target.value)}
-            placeholder="e.g. SIX Group Compliance"
+            placeholder="Author or source (optional)"
           />
         </div>
       </div>
 
+      {/* Error */}
       {error && (
-        <div className="text-sm text-state-error bg-[rgba(220,38,38,0.08)] border border-[rgba(220,38,38,0.2)] rounded-xl px-4 py-3">
-          <p className="font-medium mb-1">Upload failed</p>
-          <p className="text-xs opacity-80">{error}</p>
+        <div className="rounded-xl bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 p-3">
+          <p className="text-sm text-red-700 dark:text-red-300 font-medium">{error}</p>
         </div>
       )}
 
+      {/* Submit */}
       <Button
         type="submit"
         disabled={!file || !title.trim() || uploading}
@@ -358,7 +235,7 @@ export function KnowledgeUploadForm() {
             {progress || "Uploading…"}
           </>
         ) : (
-          "Upload & Process"
+          "Upload to Knowledge Base"
         )}
       </Button>
     </form>
