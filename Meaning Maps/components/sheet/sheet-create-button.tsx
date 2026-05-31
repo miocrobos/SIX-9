@@ -1,0 +1,43 @@
+"use client"
+
+import { useRouter } from "next/navigation"
+import { useState } from "react"
+import { Loader2, Plus } from "lucide-react"
+import { Button } from "@/components/ui/button"
+
+interface SheetCreateButtonProps {
+  label?: string
+}
+
+export function SheetCreateButton({ label = "New Sheet" }: SheetCreateButtonProps) {
+  const router = useRouter()
+  const [creating, setCreating] = useState(false)
+
+  const handleCreate = async () => {
+    setCreating(true)
+    try {
+      const res = await fetch("/api/sheets", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ name: "Untitled Sheet" }),
+      })
+      if (!res.ok) throw new Error(`${res.status}`)
+      const sheet = await res.json() as { id: string }
+      if (!sheet.id) throw new Error("No id returned")
+      router.push(`/sheets/${sheet.id}`)
+    } catch {
+      setCreating(false)
+    }
+  }
+
+  return (
+    <Button onClick={handleCreate} disabled={creating} className="gap-1.5">
+      {creating ? (
+        <Loader2 className="h-4 w-4 animate-spin" />
+      ) : (
+        <Plus className="h-4 w-4" />
+      )}
+      {label}
+    </Button>
+  )
+}
