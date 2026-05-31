@@ -79,7 +79,7 @@ const badges: BadgeItem[] = [
 ]
 
 const periodBtnActive = 'bg-[#D92525] text-white'
-const periodBtnInactive = 'bg-[#F5F5F7] dark:bg-[#111] text-gray-500 hover:text-[#1A1A1A] border border-[#E8E8F0] dark:border-[#2a2a2a]'
+const periodBtnInactive = 'bg-[#F5F5F7] dark:bg-[#111] text-gray-500 hover:text-[#1A1A1A] dark:hover:text-white dark:text-white border border-[#E8E8F0] dark:border-[#2a2a2a]'
 
 function RankIcon({ rank }: { rank: number }) {
   if (rank === 1) return <Crown size={16} className="text-[#FFD700]" />
@@ -96,10 +96,10 @@ export default function LeaderboardPage() {
   const top3 = activeData.slice(0, 3)
 
   return (
-    <div className="p-8 max-w-5xl mx-auto">
+    <div className="p-4 md:p-8 max-w-5xl mx-auto">
       {/* Header */}
       <div className="mb-6">
-        <h1 className="text-3xl font-black text-[#1A1A1A]">Leaderboard</h1>
+        <h1 className="text-2xl md:text-3xl font-black text-[#1A1A1A] dark:text-white">Leaderboard</h1>
         <p className="text-gray-500 mt-1">Earn XP by learning, contributing, and sharing knowledge with your team.</p>
       </div>
 
@@ -111,13 +111,13 @@ export default function LeaderboardPage() {
       </div>
 
       {/* Top 3 Podium */}
-      <div className="flex items-end justify-center gap-4 mb-8">
+      <div className="flex items-end justify-center gap-2 md:gap-4 mb-6 md:mb-8 overflow-x-auto">
         {/* 2nd */}
         <div className="flex flex-col items-center">
           <div className={`w-14 h-14 rounded-2xl bg-gradient-to-br ${top3[1].gradient} flex items-center justify-center text-lg font-black mb-2 shadow-lg`}>
             {top3[1].initials}
           </div>
-          <p className="text-xs font-bold text-[#1A1A1A] mb-1">{top3[1].name.split(' ')[0]}</p>
+          <p className="text-xs font-bold text-[#1A1A1A] dark:text-white mb-1">{top3[1].name.split(' ')[0]}</p>
           <div className="w-24 bg-[#C0C0C0]/20 border border-[#C0C0C0]/30 rounded-t-xl h-20 flex flex-col items-center justify-center">
             <Medal size={20} className="text-[#C0C0C0] mb-1" />
             <p className="text-xs font-bold text-[#C0C0C0]">{(top3[1].xp / 1000).toFixed(1)}K XP</p>
@@ -131,7 +131,7 @@ export default function LeaderboardPage() {
           <div className={`w-16 h-16 rounded-2xl bg-gradient-to-br ${top3[0].gradient} flex items-center justify-center text-xl font-black mb-2 shadow-2xl ring-2 ring-[#FFD700]/50`}>
             {top3[0].initials}
           </div>
-          <p className="text-xs font-bold text-[#1A1A1A] mb-1">{top3[0].name.split(' ')[0]}</p>
+          <p className="text-xs font-bold text-[#1A1A1A] dark:text-white mb-1">{top3[0].name.split(' ')[0]}</p>
           <div className="w-24 bg-[#FFD700]/20 border border-[#FFD700]/30 rounded-t-xl h-28 flex flex-col items-center justify-center">
             <Trophy size={22} className="text-[#FFD700] mb-1" />
             <p className="text-sm font-black text-[#FFD700]">{(top3[0].xp / 1000).toFixed(1)}K XP</p>
@@ -142,7 +142,7 @@ export default function LeaderboardPage() {
           <div className={`w-14 h-14 rounded-2xl bg-gradient-to-br ${top3[2].gradient} flex items-center justify-center text-lg font-black mb-2 shadow-lg`}>
             {top3[2].initials}
           </div>
-          <p className="text-xs font-bold text-[#1A1A1A] mb-1">{top3[2].name.split(' ')[0]}</p>
+          <p className="text-xs font-bold text-[#1A1A1A] dark:text-white mb-1">{top3[2].name.split(' ')[0]}</p>
           <div className="w-24 bg-[#CD7F32]/20 border border-[#CD7F32]/30 rounded-t-xl h-14 flex flex-col items-center justify-center">
             <Medal size={18} className="text-[#CD7F32] mb-0.5" />
             <p className="text-xs font-bold text-[#CD7F32]">{(top3[2].xp / 1000).toFixed(1)}K XP</p>
@@ -150,11 +150,11 @@ export default function LeaderboardPage() {
         </div>
       </div>
 
-      <div className="grid grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6">
         {/* Full Leaderboard */}
-        <div className="col-span-2 overflow-hidden rounded-lg border bg-card text-card-foreground shadow-sm">
+        <div className="col-span-1 md:col-span-2 overflow-hidden rounded-lg border bg-card text-card-foreground shadow-sm">
           <div className="px-5 py-4 border-b border-[#E8E8F0] dark:border-[#2a2a2a] flex items-center justify-between">
-            <h2 className="font-bold text-[#1A1A1A] text-sm">Rankings</h2>
+            <h2 className="font-bold text-[#1A1A1A] dark:text-white text-sm">Rankings</h2>
             <span className="text-xs text-gray-500">{activeData.length} participants</span>
           </div>
           <div className="divide-y divide-[#1F1F1F]">
@@ -172,16 +172,16 @@ export default function LeaderboardPage() {
                 </div>
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2">
-                    <span className={`text-sm font-semibold ${player.isMe ? 'text-six-gold' : 'text-[#1A1A1A]'}`}>
+                    <span className={`text-sm font-semibold ${player.isMe ? 'text-six-gold' : 'text-[#1A1A1A] dark:text-white'}`}>
                       {player.name}
                     </span>
                     {player.isMe && <span className="text-xs bg-six-gold/20 text-six-gold px-1.5 py-0.5 rounded-full font-bold">You</span>}
                   </div>
                   <p className="text-xs text-gray-500">{player.dept}</p>
                 </div>
-                <div className="flex items-center gap-4 flex-shrink-0">
-                  <div className="text-center">
-                    <p className="text-xs font-bold text-[#1A1A1A]">{String(player.xp).replace(/\B(?=(\d{3})+(?!\d))/g, ',')}</p>
+                <div className="flex items-center gap-2 md:gap-4 flex-shrink-0">
+                  <div className="text-center hidden sm:block">
+                    <p className="text-xs font-bold text-[#1A1A1A] dark:text-white">{String(player.xp).replace(/\B(?=(\d{3})+(?!\d))/g, ',')}</p>
                     <p className="text-xs text-gray-600">XP</p>
                   </div>
                   <div className="text-center">
@@ -213,7 +213,7 @@ export default function LeaderboardPage() {
                 {me.initials}
               </div>
               <div>
-                <p className="font-bold text-[#1A1A1A]">{me.name}</p>
+                <p className="font-bold text-[#1A1A1A] dark:text-white">{me.name}</p>
                 <p className="text-xs text-gray-500">{me.dept}</p>
               </div>
             </div>
@@ -235,7 +235,7 @@ export default function LeaderboardPage() {
             <div className="bg-[#F5F5F7] rounded-xl p-3">
               <div className="flex justify-between text-xs mb-1.5">
                 <span className="text-gray-500">To Rank #11</span>
-                <span className="text-[#1A1A1A] font-semibold">2,840 – 2,480 = 360 XP</span>
+                <span className="text-[#1A1A1A] dark:text-white font-semibold">2,840 – 2,480 = 360 XP</span>
               </div>
               <Progress value={78} className="h-3" />
               <p className="text-xs text-gray-600 mt-1.5 text-center">78% of the way there</p>

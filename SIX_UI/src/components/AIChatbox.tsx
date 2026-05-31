@@ -181,7 +181,7 @@ export default function AIChatbox() {
       <button
         onClick={() => setOpen(o => !o)}
         aria-label="Open SIX Knowledge AI"
-        className="fixed bottom-6 right-6 z-50 w-14 h-14 rounded-full bg-[#D92525] text-white shadow-lg
+        className="fixed bottom-20 right-4 md:bottom-6 md:right-6 z-50 w-13 h-13 md:w-14 md:h-14 rounded-full bg-[#D92525] text-white shadow-lg
           hover:bg-[#B81F1F] hover:shadow-xl transition-all duration-200 flex items-center justify-center
           focus:outline-none focus:ring-2 focus:ring-[#D92525] focus:ring-offset-2"
         style={{ boxShadow: open ? 'none' : '0 4px 20px rgba(217,37,37,0.45)' }}
@@ -192,7 +192,7 @@ export default function AIChatbox() {
       {/* Chat panel */}
       {open && (
         <div
-          className="fixed bottom-24 right-6 z-50 w-96 rounded-2xl bg-white dark:bg-[#0d0d0d] shadow-2xl border border-[#E8E8F0] dark:border-[#2a2a2a] flex flex-col overflow-hidden"
+          className="fixed bottom-36 right-2 left-2 md:left-auto md:bottom-24 md:right-6 md:w-96 z-50 rounded-2xl bg-white dark:bg-[#0d0d0d] shadow-2xl border border-[#E8E8F0] dark:border-[#2a2a2a] flex flex-col overflow-hidden"
           style={{ height: 520, maxHeight: 'calc(100vh - 120px)' }}
         >
           {/* Header */}
@@ -201,10 +201,10 @@ export default function AIChatbox() {
               <Sparkles size={15} className="text-[#D92525]" />
             </div>
             <div className="flex-1 min-w-0">
-              <p className="text-sm font-bold text-[#1A1A1A]">SIX Knowledge AI</p>
+              <p className="text-sm font-bold text-[#1A1A1A] dark:text-white">SIX Knowledge AI</p>
               <p className="text-xs text-gray-400">Grounded in verified SIX content</p>
             </div>
-            <button onClick={() => setOpen(false)} className="text-gray-400 hover:text-[#1A1A1A] transition-colors p-1">
+            <button onClick={() => setOpen(false)} className="text-gray-400 hover:text-[#1A1A1A] dark:hover:text-white dark:text-white transition-colors p-1">
               <X size={16} />
             </button>
           </div>
@@ -216,7 +216,7 @@ export default function AIChatbox() {
                 <p className="text-xs text-gray-500 text-center py-2">Ask me anything about SIX Group</p>
                 {QUICK_STARTS.map((q, i) => (
                   <button key={i} onClick={() => send(q)}
-                    className="w-full text-left text-xs p-3 rounded-xl bg-[#F5F5F7] dark:bg-[#111] border border-[#E8E8F0] dark:border-[#2a2a2a] hover:border-[#D92525]/30 hover:bg-[#FDF5F5] transition-all text-gray-600 hover:text-[#1A1A1A]">
+                    className="w-full text-left text-xs p-3 rounded-xl bg-[#F5F5F7] dark:bg-[#111] border border-[#E8E8F0] dark:border-[#2a2a2a] hover:border-[#D92525]/30 hover:bg-[#FDF5F5] transition-all text-gray-600 hover:text-[#1A1A1A] dark:hover:text-white dark:text-white">
                     <span className="text-[#D92525] mr-1.5">→</span>{q}
                   </button>
                 ))}
@@ -227,7 +227,7 @@ export default function AIChatbox() {
               <div key={msg.id} className={msg.role === 'user' ? 'flex justify-end' : ''}>
                 {msg.role === 'user' ? (
                   <div className="max-w-[85%] bg-[#D92525]/10 border border-[#D92525]/20 rounded-2xl rounded-tr-sm px-3 py-2">
-                    <p className="text-sm text-[#1A1A1A]">{msg.text}</p>
+                    <p className="text-sm text-[#1A1A1A] dark:text-white">{msg.text}</p>
                   </div>
                 ) : (
                   <div className="space-y-2">
@@ -306,7 +306,7 @@ export default function AIChatbox() {
                 placeholder="Ask about SIX…"
                 disabled={loading}
                 rows={1}
-                className="flex-1 resize-none bg-transparent text-sm text-[#1A1A1A] placeholder-gray-400 focus:outline-none max-h-20 overflow-y-auto"
+                className="flex-1 resize-none bg-transparent text-sm text-[#1A1A1A] dark:text-white placeholder-gray-400 focus:outline-none max-h-20 overflow-y-auto"
                 style={{ scrollbarWidth: 'none' }}
               />
               <div className="flex items-center gap-0.5 shrink-0">

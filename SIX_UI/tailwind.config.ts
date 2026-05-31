@@ -80,9 +80,8 @@ const config: Config = {
           '100%':    { transform: 'translateY(0)' },
         },
         pulseGold: {
-          '0%':   { boxShadow: '0 0 0 0 rgba(217,37,37,0.5)' },
-          '10%':  { boxShadow: '0 0 0 12px rgba(217,37,37,0)' },
-          '100%': { boxShadow: '0 0 0 0 rgba(217,37,37,0)' },
+          '0%, 100%': { transform: 'scale(1)', opacity: '1' },
+          '50%': { transform: 'scale(1.03)', opacity: '0.92' },
         },
         float: {
           '0%, 100%': { transform: 'translateY(0px)' },

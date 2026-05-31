@@ -290,7 +290,7 @@ function GamePlayContent() {
   const [answered, setAnswered] = useState(false)
   const [lives, setLives] = useState(cfg.lives)
   const [score, setScore] = useState(0)
-  const [timeLeft, setTimeLeft] = useState(cfg.time)
+  const [timeLeft, setTimeLeft] = useState<number>(cfg.time)
   const [results, setResults] = useState<{ correct: boolean; chosen: number | null }[]>([])
   const [streak, setStreak] = useState(0)
   const [bestStreak, setBestStreak] = useState(0)
@@ -313,7 +313,7 @@ function GamePlayContent() {
       })
     } else {
       setStreak(0)
-      setLives(l => l - 1)
+      setLives(l => (l - 1) as 1 | 3)
     }
   }, [answered, q])
 
@@ -359,12 +359,12 @@ function GamePlayContent() {
   /* ── INTRO ── */
   if (phase === 'intro') return (
     <div className="p-8 max-w-2xl mx-auto">
-      <Link href="/game" className="flex items-center gap-2 text-gray-500 hover:text-[#1A1A1A] text-sm mb-8 transition-colors">
+      <Link href="/game" className="flex items-center gap-2 text-gray-500 hover:text-[#1A1A1A] dark:hover:text-white dark:text-white text-sm mb-8 transition-colors">
         <ArrowLeft size={16} /> Back to Know Game
       </Link>
       <div className="six-card p-10 text-center bg-gradient-to-br from-duo-green/20 to-duo-blue/10 border border-duo-green/30">
         <div className="text-6xl mb-4">{cfg.emoji}</div>
-        <h1 className="text-4xl font-black text-[#1A1A1A] mb-2">{cfg.title}</h1>
+        <h1 className="text-4xl font-black text-[#1A1A1A] dark:text-white mb-2">{cfg.title}</h1>
         <p className="text-gray-500 mb-8">{cfg.desc}</p>
         <div className="grid grid-cols-3 gap-4 mb-10">
           {[
@@ -404,7 +404,7 @@ function GamePlayContent() {
 
         <div className="grid grid-cols-3 gap-4 mb-8">
           <div className="six-card p-4">
-            <p className="text-3xl font-black text-[#1A1A1A]">{pct}%</p>
+            <p className="text-3xl font-black text-[#1A1A1A] dark:text-white">{pct}%</p>
             <p className="text-xs text-gray-500 mt-1">Accuracy</p>
           </div>
           <div className="six-card p-4">
@@ -453,7 +453,7 @@ function GamePlayContent() {
     <div className="p-8 max-w-2xl mx-auto">
       {/* HUD */}
       <div className="flex items-center justify-between mb-6">
-        <Link href="/game" className="flex items-center gap-2 text-gray-500 hover:text-[#1A1A1A] text-sm transition-colors">
+        <Link href="/game" className="flex items-center gap-2 text-gray-500 hover:text-[#1A1A1A] dark:hover:text-white dark:text-white text-sm transition-colors">
           <ArrowLeft size={16} /> Exit
         </Link>
         <div className="flex items-center gap-4">
@@ -500,7 +500,7 @@ function GamePlayContent() {
           </span>
           <span className="text-xs text-gray-600">Question {current + 1} of {cfg.total}</span>
         </div>
-        <h2 className="text-xl font-bold text-[#1A1A1A] leading-relaxed">{q.question}</h2>
+        <h2 className="text-xl font-bold text-[#1A1A1A] dark:text-white leading-relaxed">{q.question}</h2>
       </div>
 
       {/* Answer Options */}

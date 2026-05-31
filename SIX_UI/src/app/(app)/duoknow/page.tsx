@@ -127,18 +127,18 @@ function NodeCard({ node, onSelect, selected }: { node: PathNode; onSelect: (n: 
           : <node.icon size={22} className="text-white" />}
         {isCompleted && (
           <div className="absolute -top-2 -right-2 w-6 h-6 bg-[#58CC02] rounded-full flex items-center justify-center border-2 border-white">
-            <CheckCircle size={14} className="text-[#1A1A1A]" />
+            <CheckCircle size={14} className="text-[#1A1A1A] dark:text-white" />
           </div>
         )}
         {isActive && (
           <div className="absolute -top-2 -right-2 w-6 h-6 bg-[#FF9600] rounded-full flex items-center justify-center border-2 border-white animate-bounce-slow">
-            <Play size={10} className="text-[#1A1A1A] ml-0.5" />
+            <Play size={10} className="text-[#1A1A1A] dark:text-white ml-0.5" />
           </div>
         )}
       </button>
 
       <div className="mt-2 text-center">
-        <p className={`text-xs font-bold ${isLocked ? 'text-gray-600' : 'text-[#1A1A1A]'}`}>{node.title}</p>
+        <p className={`text-xs font-bold ${isLocked ? 'text-gray-600' : 'text-[#1A1A1A] dark:text-white'}`}>{node.title}</p>
         <p className="text-xs text-gray-600">{node.subtitle}</p>
       </div>
 
@@ -148,7 +148,7 @@ function NodeCard({ node, onSelect, selected }: { node: PathNode; onSelect: (n: 
           <Card className="p-4 border border-[#E8E8F0] dark:border-[#2a2a2a] shadow-2xl">
           <div className="flex items-start justify-between mb-2">
             <div>
-              <h4 className="font-bold text-[#1A1A1A] text-sm">{node.title}</h4>
+              <h4 className="font-bold text-[#1A1A1A] dark:text-white text-sm">{node.title}</h4>
               <p className="text-xs text-gray-500 mt-0.5">{node.subtitle}</p>
             </div>
             <Badge variant="xp">+{node.xp} XP</Badge>
@@ -205,33 +205,33 @@ export default function DuoKnowPage() {
           onComplete={() => setTransitionDone(true)}
         />
       )}
-      <div className="p-8 max-w-5xl mx-auto">
+      <div className="p-4 md:p-8 max-w-5xl mx-auto">
       {/* Header */}
       <div className="mb-8">
-        <h1 className="text-3xl font-black text-[#1A1A1A]">DuoKnow</h1>
+        <h1 className="text-2xl md:text-3xl font-black text-[#1A1A1A] dark:text-white">DuoKnow</h1>
         <p className="text-gray-500 mt-1">Learn from your organization's best experts. Build skills, earn XP, keep your streak.</p>
       </div>
 
       {/* Stats Bar */}
-      <div className="flex items-stretch gap-4 mb-8">
+      <div className="grid grid-cols-3 md:flex md:items-stretch gap-2 md:gap-4 mb-6 md:mb-8">
         <Card className="flex-1 min-w-0 px-4 py-4 flex flex-col items-center justify-center gap-1 text-center">
           <Flame size={16} className="text-[#FF9600] mb-1" />
-          <p className="text-xl font-black text-[#1A1A1A]">{streak}</p>
+          <p className="text-xl font-black text-[#1A1A1A] dark:text-white">{streak}</p>
           <p className="text-xs text-gray-500">Day Streak</p>
         </Card>
         <Card key="xp" className="flex-1 min-w-0 px-4 py-4 flex flex-col items-center justify-center gap-1 text-center">
           <Zap size={16} className="text-[#D92525] mb-1" />
-          <p className="text-xl font-black text-[#1A1A1A]">{totalXP.toFixed(0).replace(/\B(?=(\d{3})+(?!\d))/g, ',')}</p>
+          <p className="text-xl font-black text-[#1A1A1A] dark:text-white">{totalXP.toFixed(0).replace(/\B(?=(\d{3})+(?!\d))/g, ',')}</p>
           <p className="text-xs text-gray-500">Total XP</p>
         </Card>
         <Card key="league" className="flex-1 min-w-0 px-4 py-4 flex flex-col items-center justify-center gap-1 text-center">
           <Trophy size={16} className="text-[#CE82FF] mb-1" />
-          <p className="text-xl font-black text-[#1A1A1A]">Gold</p>
+          <p className="text-xl font-black text-[#1A1A1A] dark:text-white">Gold</p>
           <p className="text-xs text-gray-500">Current League</p>
         </Card>
         <Card key="badges" className="flex-1 min-w-0 px-4 py-4 flex flex-col items-center justify-center gap-1 text-center">
           <Award size={16} className="text-[#58CC02] mb-1" />
-          <p className="text-xl font-black text-[#1A1A1A]">8</p>
+          <p className="text-xl font-black text-[#1A1A1A] dark:text-white">8</p>
           <p className="text-xs text-gray-500">Badges Earned</p>
         </Card>
         <Link
@@ -239,7 +239,7 @@ export default function DuoKnowPage() {
           className="flex-1 min-w-0 rounded-lg border bg-card px-4 py-4 flex flex-col items-center justify-center gap-1 text-center hover:border-[#D92525]/30 transition-colors group shadow-sm"
         >
           <Star size={16} className="text-[#D92525] mb-1 group-hover:animate-bounce-slow" />
-          <p className="text-sm font-bold text-[#1A1A1A]">Rank #12</p>
+          <p className="text-sm font-bold text-[#1A1A1A] dark:text-white">Rank #12</p>
           <p className="text-xs text-gray-500 flex items-center gap-1">Leaderboard <ArrowRight size={10} /></p>
         </Link>
       </div>
@@ -276,7 +276,8 @@ export default function DuoKnowPage() {
             {/* Path Nodes */}
             {expandedPath === path.category && (
               <div className="px-6 pb-8 pt-4">
-                <div className="relative flex items-start justify-around">
+                <div className="overflow-x-auto -mx-2 px-2">
+                  <div className="relative flex items-start justify-around min-w-[320px]">
                   {/* Connector line */}
                   <div className="absolute top-10 left-10 right-10 h-0.5 bg-[#E0E0E8] z-0" />
 
@@ -286,12 +287,11 @@ export default function DuoKnowPage() {
                     </div>
                   ))}
                 </div>
-
-                {/* Active lesson CTA */}
+                </div>
                 {path.nodes.find(n => n.status === 'active') && (
                   <div className="mt-8 bg-[#F5F5F7] dark:bg-[#111] border border-[#E8E8F0] dark:border-[#2a2a2a] rounded-2xl p-4 flex items-center justify-between">
                     <div>
-                      <p className="text-sm font-bold text-[#1A1A1A]">
+                      <p className="text-sm font-bold text-[#1A1A1A] dark:text-white">
                         Continue: {path.nodes.find(n => n.status === 'active')?.title}
                       </p>
                       <p className="text-xs text-gray-500 mt-0.5">
@@ -312,7 +312,7 @@ export default function DuoKnowPage() {
       </div>
 
       {/* Bottom CTA — Go to Textbook */}
-      <div className="mt-6 grid grid-cols-2 gap-4">
+      <div className="mt-6 grid grid-cols-1 sm:grid-cols-2 gap-3 md:gap-4">
         <Link
           href="/textbook"
           className="rounded-lg border bg-card p-5 flex items-center gap-4 hover:border-[#D92525]/30 transition-all group cursor-pointer shadow-sm"
@@ -321,7 +321,7 @@ export default function DuoKnowPage() {
             <BookOpen size={22} className="text-[#D92525]" />
           </div>
           <div className="flex-1">
-            <p className="font-bold text-[#1A1A1A] text-sm">Knowledge Textbook</p>
+            <p className="font-bold text-[#1A1A1A] dark:text-white text-sm">Knowledge Textbook</p>
             <p className="text-xs text-gray-500 mt-0.5">Read full expert knowledge articles</p>
           </div>
           <ArrowRight size={16} className="text-gray-600 group-hover:text-[#D92525] transition-colors" />
@@ -334,7 +334,7 @@ export default function DuoKnowPage() {
             <Trophy size={22} className="text-[#CE82FF]" />
           </div>
           <div className="flex-1">
-            <p className="font-bold text-[#1A1A1A] text-sm">Gamified Leaderboard</p>
+            <p className="font-bold text-[#1A1A1A] dark:text-white text-sm">Gamified Leaderboard</p>
             <p className="text-xs text-gray-500 mt-0.5">See your rank and earn achievements</p>
           </div>
           <ArrowRight size={16} className="text-gray-600 group-hover:text-[#CE82FF] transition-colors" />

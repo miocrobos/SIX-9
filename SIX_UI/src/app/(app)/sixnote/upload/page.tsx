@@ -65,16 +65,16 @@ export default function UploadPage() {
 
   /* ── SUCCESS ── */
   if (phase === 'success') return (
-    <div className="p-8 max-w-2xl mx-auto">
-      <div className="six-card p-12 text-center bg-gradient-to-br from-duo-green/15 to-duo-blue/10 border border-duo-green/30">
+    <div className="p-4 md:p-8 max-w-2xl mx-auto">
+      <div className="six-card p-7 md:p-12 text-center bg-gradient-to-br from-duo-green/15 to-duo-blue/10 border border-duo-green/30">
         <div className="w-20 h-20 rounded-full bg-duo-green/20 border-2 border-duo-green flex items-center justify-center mx-auto mb-6">
           <CheckCircle size={40} className="text-duo-green" />
         </div>
-        <h2 className="text-3xl font-black text-[#1A1A1A] mb-2">Upload Successful!</h2>
+        <h2 className="text-3xl font-black text-[#1A1A1A] dark:text-white mb-2">Upload Successful!</h2>
         <p className="text-gray-500 mb-2">Your knowledge is now queued for SME verification.</p>
         <p className="text-sm text-gray-500 mb-8">You'll be notified once {requestVerify ? 'a reviewer approves' : 'it goes live'} in the knowledge base.</p>
         <div className="six-card p-4 text-left mb-8">
-          <p className="text-sm font-bold text-[#1A1A1A] mb-1">{title}</p>
+          <p className="text-sm font-bold text-[#1A1A1A] dark:text-white mb-1">{title}</p>
           <p className="text-xs text-gray-500">{dept} · {contentType} · {files.length} file{files.length !== 1 ? 's' : ''}</p>
         </div>
         <div className="flex gap-3">
@@ -94,10 +94,10 @@ export default function UploadPage() {
 
   /* ── UPLOADING ── */
   if (phase === 'uploading') return (
-    <div className="p-8 max-w-2xl mx-auto">
-      <div className="six-card p-12 text-center">
+    <div className="p-4 md:p-8 max-w-2xl mx-auto">
+      <div className="six-card p-7 md:p-12 text-center">
         <div className="text-5xl mb-6 animate-bounce">📤</div>
-        <h2 className="text-2xl font-black text-[#1A1A1A] mb-2">Uploading & Processing...</h2>
+        <h2 className="text-2xl font-black text-[#1A1A1A] dark:text-white mb-2">Uploading & Processing...</h2>
         <p className="text-gray-500 mb-8 text-sm">Extracting knowledge, tagging content, building index...</p>
         <div className="h-3 bg-[#E8E8F0] rounded-full overflow-hidden mb-3">
           <div className="h-full bg-duo-blue rounded-full transition-all duration-200" style={{ width: `${progress}%` }} />
@@ -111,9 +111,9 @@ export default function UploadPage() {
 
   /* ── FORM ── */
   return (
-    <div className="p-8 max-w-3xl mx-auto">
+    <div className="p-4 md:p-8 max-w-3xl mx-auto">
       <div className="flex items-center gap-2 mb-3">
-        <Link href="/sixnote" className="text-gray-500 hover:text-[#1A1A1A] text-sm transition-colors flex items-center gap-1">
+        <Link href="/sixnote" className="text-gray-500 hover:text-[#1A1A1A] dark:hover:text-white dark:text-white text-sm transition-colors flex items-center gap-1">
           <ArrowLeft size={14} /> SIX Note
         </Link>
         <span className="text-gray-700">/</span>
@@ -124,7 +124,7 @@ export default function UploadPage() {
           <Upload size={20} className="text-duo-blue" />
         </div>
         <div>
-          <h1 className="text-2xl font-black text-[#1A1A1A]">Upload Information</h1>
+          <h1 className="text-2xl font-black text-[#1A1A1A] dark:text-white">Upload Information</h1>
           <p className="text-gray-500 text-sm">Share your expertise. Attribute it. Make it traceable.</p>
         </div>
       </div>
@@ -136,12 +136,12 @@ export default function UploadPage() {
           onDragLeave={() => setDragging(false)}
           onDrop={handleDrop}
           onClick={() => fileInputRef.current?.click()}
-          className={`border-2 border-dashed rounded-2xl p-10 text-center cursor-pointer transition-all
+          className={`border-2 border-dashed rounded-2xl p-6 md:p-10 text-center cursor-pointer transition-all
             ${dragging ? 'border-duo-blue bg-duo-blue/10' : 'border-[#E8E8F0] dark:border-[#2a2a2a] hover:border-duo-blue/40 hover:bg-[#F5F5F7]'}`}
         >
           <input ref={fileInputRef} type="file" multiple className="hidden" onChange={handleFileInput} accept=".pdf,.doc,.docx,.ppt,.pptx,.txt,.md" />
           <div className="text-4xl mb-3">📂</div>
-          <p className="text-[#1A1A1A] font-semibold mb-1">Drop files here or click to browse</p>
+          <p className="text-[#1A1A1A] dark:text-white font-semibold mb-1">Drop files here or click to browse</p>
           <p className="text-xs text-gray-500">PDF, Word, PowerPoint, Markdown, TXT · Max 50 MB per file</p>
         </div>
 
@@ -151,7 +151,7 @@ export default function UploadPage() {
             {files.map((f, i) => (
               <div key={i} className="flex items-center gap-3 p-3 rounded-xl bg-[#F5F5F7] dark:bg-[#111] border border-[#E8E8F0] dark:border-[#2a2a2a]">
                 <FileText size={16} className="text-duo-blue shrink-0" />
-                <span className="text-sm text-[#1A1A1A] flex-1 truncate">{f.name}</span>
+                <span className="text-sm text-[#1A1A1A] dark:text-white flex-1 truncate">{f.name}</span>
                 <span className="text-xs text-gray-500 shrink-0">{fmt(f.size)}</span>
                 <button onClick={() => setFiles(files.filter((_, j) => j !== i))} className="text-gray-600 hover:text-duo-red transition-colors ml-1">
                   <X size={14} />
@@ -230,7 +230,7 @@ export default function UploadPage() {
                 onClick={() => toggleSource(s.id)}
                 className={`flex items-center gap-2 px-3 py-2 rounded-xl text-sm font-medium border transition-all
                   ${selectedSources.includes(s.id)
-                    ? 'text-[#1A1A1A] border-transparent'
+                    ? 'text-[#1A1A1A] dark:text-white border-transparent'
                     : 'text-gray-500 border-[#E8E8F0] dark:border-[#2a2a2a] hover:border-[#3A3A3A]'}`}
                 style={selectedSources.includes(s.id) ? { backgroundColor: s.color + '33', borderColor: s.color + '88', color: s.color } : {}}
               >
@@ -258,7 +258,7 @@ export default function UploadPage() {
           <div className="flex items-center gap-3">
             <AlertCircle size={16} className="text-duo-orange" />
             <div>
-              <p className="text-sm font-semibold text-[#1A1A1A]">Request SME Verification</p>
+              <p className="text-sm font-semibold text-[#1A1A1A] dark:text-white">Request SME Verification</p>
               <p className="text-xs text-gray-500">A subject-matter expert will review before publishing</p>
             </div>
           </div>
