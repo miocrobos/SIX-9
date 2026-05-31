@@ -13,11 +13,18 @@ export default function IntroAnimation({ onComplete }: IntroAnimationProps) {
   const taglineRef  = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
+    const isDark = document.documentElement.classList.contains('dark')
+    const overlayAnim = isDark ? 'sixIntroOverlayDark 4.5s ease forwards' : 'sixIntroOverlay 4s ease forwards'
+    const logoAnim = isDark ? 'sixIntroLogoDark 4.5s ease forwards' : 'sixIntroLogo 4s ease forwards'
+    const redBoxAnim = isDark ? 'sixRedBoxDark 5s ease forwards' : 'sixRedBox 4s ease forwards'
+    const taglineAnim = isDark ? 'sixIntroTaglineDark 2.5s ease 2s forwards' : 'sixIntroTagline 4s ease forwards'
+    const completeDelay = isDark ? 4500 : 3400
+
     const entries = [
-      { ref: overlayRef,  anim: 'sixIntroOverlay 4s ease forwards'  },
-      { ref: logoRef,     anim: 'sixIntroLogo 4s ease forwards'      },
-      { ref: redBoxRef,   anim: 'sixRedBox 4s ease forwards'         },
-      { ref: taglineRef,  anim: 'sixIntroTagline 4s ease forwards'   },
+      { ref: overlayRef,  anim: overlayAnim },
+      { ref: logoRef,     anim: logoAnim },
+      { ref: redBoxRef,   anim: redBoxAnim },
+      { ref: taglineRef,  anim: taglineAnim },
     ]
 
     // 1. Strip all animations so the browser resets the playback state
@@ -29,7 +36,7 @@ export default function IntroAnimation({ onComplete }: IntroAnimationProps) {
     // 3. Re-apply animations — they now start fresh from 0%
     entries.forEach(({ ref, anim }) => { if (ref.current) ref.current.style.animation = anim })
 
-    const t = setTimeout(onComplete, 3400)
+    const t = setTimeout(onComplete, completeDelay)
     return () => clearTimeout(t)
   }, [onComplete])
 
@@ -86,6 +93,8 @@ export default function IntroAnimation({ onComplete }: IntroAnimationProps) {
         ref={taglineRef}
         style={{
           marginTop: 28,
+          opacity: 0,
+          transform: 'translateY(5px)',
           fontFamily: "'Helvetica Neue', Helvetica, Arial, sans-serif",
           fontWeight: 700, fontSize: '0.6rem', color: 'var(--overlay-text)',
           textTransform: 'uppercase', letterSpacing: '0.22em',

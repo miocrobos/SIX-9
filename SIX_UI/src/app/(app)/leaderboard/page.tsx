@@ -7,6 +7,7 @@ import {
   Calendar, Rocket, Lock
 } from 'lucide-react'
 import type { LucideIcon } from 'lucide-react'
+import PageTransition from '@/components/PageTransition'
 import { Card } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
@@ -90,13 +91,22 @@ function RankIcon({ rank }: { rank: number }) {
 
 export default function LeaderboardPage() {
   const [period, setPeriod] = useState<'weekly' | 'monthly' | 'alltime'>('monthly')
+  const [transitionDone, setTransitionDone] = useState(false)
 
   const activeData = period === 'weekly' ? weeklyData : period === 'monthly' ? monthlyData : leaderboardData
   const me = activeData.find(p => p.isMe)!
   const top3 = activeData.slice(0, 3)
 
   return (
-    <div className="p-4 md:p-8 max-w-5xl mx-auto">
+    <>
+      {!transitionDone && (
+        <PageTransition
+          Icon={Trophy}
+          quote="Learn. Contribute. Rise in the ranks."
+          onComplete={() => setTransitionDone(true)}
+        />
+      )}
+      <div className="p-4 md:p-8 max-w-5xl mx-auto">
       {/* Header */}
       <div className="mb-6">
         <h1 className="text-2xl md:text-3xl font-black text-[#1A1A1A] dark:text-white">Leaderboard</h1>
@@ -284,6 +294,7 @@ export default function LeaderboardPage() {
           </Card>
         </div>
       </div>
-    </div>
+      </div>
+    </>
   )
 }

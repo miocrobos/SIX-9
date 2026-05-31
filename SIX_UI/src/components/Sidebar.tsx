@@ -11,7 +11,7 @@ import { Badge } from '@/components/ui/badge'
 
 const navItems = [
   { href: '/dashboard',   label: 'Dashboard',      icon: Home },
-  { href: '/duoknow',     label: 'DuoKnow',        icon: Zap },
+  { href: '/game/play',   label: 'DuoKnow',        icon: Zap },
   { href: '/game',        label: 'Know Game',      icon: Gamepad2 },
   { href: '/textbook',    label: 'Knowledge Hub',  icon: BookOpen },
   { href: '/leaderboard', label: 'Leaderboard',    icon: Trophy },

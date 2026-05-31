@@ -19,7 +19,7 @@ const features = [
     color: '#58CC02',
     bg: '#F0FBE8',
     desc: 'Gamified learning paths modelled on Duolingo. Earn XP, build streaks, and master organisational knowledge through bite-sized interactive modules.',
-    href: '/dashboard',
+    href: '/game/play',
   },
   {
     icon: BookOpen,
@@ -189,14 +189,14 @@ export default function LandingPage() {
               <button
                 onClick={() => setHubModal(true)}
                 style={{
-                  fontWeight: 700, fontSize: '1rem',
+                  fontWeight: 700,
                   background: '#D92525', color: '#fff',
-                  padding: '0.875rem 2rem', borderRadius: '10px',
+                  borderRadius: '10px',
                   border: 'none', cursor: 'pointer',
                   display: 'inline-flex', alignItems: 'center', gap: '8px',
                   boxShadow: '0 4px 0 #A01B10',
                 }}
-                className="hover:brightness-110 transition-all active:translate-y-1"
+                className="w-full sm:w-auto justify-center px-5 sm:px-8 py-3 sm:py-3.5 text-sm sm:text-base hover:brightness-110 transition-all active:translate-y-1"
               >
                 Launch the Hub <ArrowRight size={16} />
               </button>
@@ -257,14 +257,14 @@ export default function LandingPage() {
           <button
             onClick={() => setHubModal(true)}
             style={{
-              fontWeight: 700, fontSize: '0.95rem',
+              fontWeight: 700,
               background: '#D92525', color: '#fff',
-              padding: '0.75rem 1.5rem', borderRadius: '10px',
+              borderRadius: '10px',
               border: 'none', cursor: 'pointer',
               display: 'inline-flex', alignItems: 'center', gap: '8px',
               boxShadow: '0 3px 0 #A01B10'
             }}
-            className="hover:brightness-110 transition-all"
+            className="w-full sm:w-auto justify-center px-4 sm:px-6 py-2.5 sm:py-3 text-sm sm:text-[0.95rem] hover:brightness-110 transition-all"
           >
             Launch the Hub <ArrowRight size={14} />
           </button>
@@ -305,14 +305,14 @@ export default function LandingPage() {
           <button
             onClick={() => setHubModal(true)}
             style={{
-              fontWeight: 700, fontSize: '1rem',
+              fontWeight: 700,
               background: '#fff', color: '#D92525',
-              padding: '0.875rem 2.25rem', borderRadius: '10px',
+              borderRadius: '10px',
               border: 'none', cursor: 'pointer',
               display: 'inline-flex', alignItems: 'center', gap: '8px',
               boxShadow: '0 4px 0 rgba(0,0,0,0.15)'
             }}
-            className="hover:brightness-95 transition-all"
+            className="w-full sm:w-auto justify-center px-5 sm:px-9 py-3 sm:py-3.5 text-sm sm:text-base hover:brightness-95 transition-all"
           >
             Launch the Hub <ArrowRight size={16} />
           </button>
