@@ -25,6 +25,7 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { KnowledgeVoiceSelector } from "./knowledge-voice-selector"
 import { DEFAULT_VOICE, MAX_FILE_SIZE, MAX_IMAGE_SIZE, ACCEPTED_IMAGE_TYPES } from "@/lib/knowledge-constants"
+import { parsePDFFile } from "@/lib/pdf-client"
 
 // ─── Loading overlay (mirrors PDF Uploader's LoadingOverlay) ─────────────────
 
@@ -167,9 +168,8 @@ export function KnowledgeUploadForm() {
     setSubmitting(true)
 
     try {
-      // 1 ── Parse PDF client-side (import.meta.url resolves in lib/pdf-client.ts)
+      // 1 ── Parse PDF client-side
       setStatusLabel("Parsing your document…")
-      const { parsePDFFile } = await import("@/lib/pdf-client")
       const parsedPDF = await parsePDFFile(pdfFile)
 
       if (parsedPDF.content.length === 0) {

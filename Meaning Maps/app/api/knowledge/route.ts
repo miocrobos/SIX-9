@@ -21,7 +21,8 @@ async function extractTextServerSide(fileUrl: string, fileType: string): Promise
   const buf = Buffer.from(await res.arrayBuffer())
 
   if (fileType === "pdf") {
-    const pdfParse = (await import("pdf-parse")).default
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const pdfParse = ((await import("pdf-parse")) as any).default
     const data = await pdfParse(buf)
     return data.text ?? ""
   }

@@ -1,9 +1,8 @@
 /**
- * Client-side PDF parsing — exact copy of PDF Uploader's parsePDFFile.
+ * Client-side PDF parsing — exact logic from PDF Uploader's lib/utils.ts.
  *
- * IMPORTANT: This file must stay in lib/ (not inside a component file).
- * The `import.meta.url` in the worker setup is resolved by Turbopack
- * relative to THIS file's location, which lets it trace the worker correctly.
+ * Worker is loaded from /pdf.worker.min.mjs (public folder) — this is the
+ * most reliable approach across Turbopack / Webpack / Safari / Chrome.
  */
 
 export interface TextSegment {
@@ -12,7 +11,6 @@ export interface TextSegment {
   wordCount: number
 }
 
-/** Mirrors PDF Uploader's splitIntoSegments — 500-word chunks with 50-word overlap */
 export function splitIntoSegments(
   text: string,
   segmentSize = 500,
@@ -40,53 +38,60 @@ export function splitIntoSegments(
 
 export interface ParsedPDF {
   content: TextSegment[]
-  cover: string // data URL
+  cover: string // data URL of first page
 }
 
-/**
- * Exact replica of PDF Uploader's parsePDFFile.
- * Uses import.meta.url so Turbopack can trace the worker at build time.
- */
 export async function parsePDFFile(file: File): Promise<ParsedPDF> {
-  const pdfjsLib = await import("pdfjs-dist")
+  try {
+    const pdfjsLib = await import("pdfjs-dist")
 
-  if (typeof window !== "undefined") {
-    pdfjsLib.GlobalWorkerOptions.workerSrc = new URL(
-      "pdfjs-dist/build/pdf.worker.min.mjs",
-      import.meta.url
-    ).toString()
+    // Use the public folder worker — reliable in all bundlers and browsers.
+    if (typeof window !== "undefined") {
+      pdfjsLib.GlobalWorkerOptions.workerSrc = "/pdf.worker.min.mjs"
+    }
+
+    const arrayBuffer = await file.arrayBuffer()
+    const loadingTask = pdfjsLib.getDocument({ data: arrayBuffer })
+    const pdfDocument = await loadingTask.promise
+
+    // Render first page as cover image
+    const firstPage = await pdfDocument.getPage(1)
+    const viewport = firstPage.getViewport({ scale: 2 })
+
+    const canvas = document.createElement("canvas")
+    canvas.width = viewport.width
+    canvas.height = viewport.height
+    const context = canvas.getContext("2d")
+
+    if (!context) throw new Error("Could not get canvas context")
+
+    await firstPage.render({
+      canvasContext: context as unknown as Parameters<typeof firstPage.render>[0]["canvasContext"],
+      canvas: canvas as unknown as HTMLCanvasElement,
+      viewport,
+    }).promise
+
+    const coverDataURL = canvas.toDataURL("image/png")
+
+    // Extract text from all pages
+    let fullText = ""
+    for (let pageNum = 1; pageNum <= pdfDocument.numPages; pageNum++) {
+      const page = await pdfDocument.getPage(pageNum)
+      const textContent = await page.getTextContent()
+      const pageText = textContent.items
+        .filter((item) => "str" in item)
+        .map((item) => (item as { str: string }).str)
+        .join(" ")
+      fullText += pageText + "\n"
+    }
+
+    await pdfDocument.destroy()
+
+    return { content: splitIntoSegments(fullText), cover: coverDataURL }
+  } catch (error) {
+    console.error("Error parsing PDF:", error)
+    throw new Error(
+      `Failed to parse PDF file: ${error instanceof Error ? error.message : String(error)}`
+    )
   }
-
-  const arrayBuffer = await file.arrayBuffer()
-  const loadingTask = pdfjsLib.getDocument({ data: arrayBuffer })
-  const pdfDocument = await loadingTask.promise
-
-  // Render first page as cover image
-  const firstPage = await pdfDocument.getPage(1)
-  const viewport = firstPage.getViewport({ scale: 2 })
-
-  const canvas = document.createElement("canvas")
-  canvas.width = viewport.width
-  canvas.height = viewport.height
-  const context = canvas.getContext("2d")!
-
-  await firstPage.render({ canvasContext: context, viewport }).promise
-
-  const coverDataURL = canvas.toDataURL("image/png")
-
-  // Extract text from all pages
-  let fullText = ""
-  for (let pageNum = 1; pageNum <= pdfDocument.numPages; pageNum++) {
-    const page = await pdfDocument.getPage(pageNum)
-    const textContent = await page.getTextContent()
-    const pageText = textContent.items
-      .filter((item) => "str" in item)
-      .map((item) => (item as { str: string }).str)
-      .join(" ")
-    fullText += pageText + "\n"
-  }
-
-  await pdfDocument.destroy()
-
-  return { content: splitIntoSegments(fullText), cover: coverDataURL }
 }
