@@ -63,31 +63,34 @@ interface ParsedDoc {
 async function parsePdf(file: File): Promise<ParsedDoc> {
   const pdfjsLib = await import("pdfjs-dist")
 
-  // Use the local public worker — avoids CDN version mismatches and bundler issues
-  pdfjsLib.GlobalWorkerOptions.workerSrc = "/pdf.worker.min.mjs"
+  // Use unpkg CDN — always matches the exact installed version, no bundler issues
+  pdfjsLib.GlobalWorkerOptions.workerSrc =
+    `https://unpkg.com/pdfjs-dist@${pdfjsLib.version}/build/pdf.worker.min.mjs`
 
+  // Convert to ArrayBuffer first — avoids ReadableStream issues with some browsers
   const arrayBuffer = await file.arrayBuffer()
-  const pdfDoc = await pdfjsLib.getDocument({ data: new Uint8Array(arrayBuffer) }).promise
+  // Pass as Uint8Array; pdfjs v5 accepts TypedArray
+  const loadingTask = pdfjsLib.getDocument({ data: new Uint8Array(arrayBuffer) })
+  const pdfDoc = await loadingTask.promise
 
   let coverBlob: Blob | null = null
   try {
     const page = await pdfDoc.getPage(1)
-    // Render at 0.75x — keeps the cover under ~200 KB
     const viewport = page.getViewport({ scale: 0.75 })
     const canvas = document.createElement("canvas")
     canvas.width = viewport.width
     canvas.height = viewport.height
     const ctx = canvas.getContext("2d")!
-    await page.render({
-      canvasContext: ctx as unknown as Parameters<typeof page.render>[0]["canvasContext"],
-      canvas: canvas as unknown as Parameters<typeof page.render>[0]["canvas"],
+    // pdfjs v5 render — canvas is passed as canvasContext target
+    await (page.render as (p: Record<string, unknown>) => { promise: Promise<void> })({
+      canvasContext: ctx,
       viewport,
     }).promise
     coverBlob = await new Promise<Blob | null>((resolve) =>
-      canvas.toBlob((b) => resolve(b), "image/jpeg", 0.85)
+      canvas.toBlob((b) => resolve(b), "image/jpeg", 0.80)
     )
   } catch {
-    // Cover is non-critical — proceed without it
+    // Cover is decorative — skip silently
   }
 
   let fullText = ""
@@ -179,39 +182,59 @@ export function KnowledgeUploadForm() {
     try {
       // Step 1: parse document client-side
       setProgress("Parsing document…")
-      const { segments, coverBlob } = await parseDocument(file)
+      let segments: string[] = []
+      let coverBlob: Blob | null = null
+      try {
+        const parsed = await parseDocument(file)
+        segments = parsed.segments
+        coverBlob = parsed.coverBlob
+      } catch (parseErr) {
+        throw new Error(`Parsing failed: ${(parseErr as Error).message}`)
+      }
 
       // Step 2: upload the document file to Vercel Blob
       setProgress("Uploading file…")
-      const blob = await upload(title.trim(), file, {
-        access: "public",
-        handleUploadUrl: "/api/knowledge/upload",
-        contentType: file.type || "application/octet-stream",
-      })
+      let fileUrl = ""
+      let fileBlobKey = ""
+      try {
+        const blobResult = await upload(title.trim(), file, {
+          access: "public",
+          handleUploadUrl: "/api/knowledge/upload",
+          contentType: file.type || "application/octet-stream",
+        })
+        fileUrl = blobResult.url
+        fileBlobKey = blobResult.pathname
+      } catch (blobErr) {
+        throw new Error(`File upload failed: ${(blobErr as Error).message}`)
+      }
 
-      // Step 3: upload cover to Vercel Blob separately (avoids large base64 in POST body)
+      // Step 3: upload cover to Vercel Blob separately
       let coverUrl: string | undefined
       if (coverBlob) {
         setProgress("Uploading cover…")
-        const coverFile = new File([coverBlob], `${title.trim()}-cover.jpg`, { type: "image/jpeg" })
-        const coverBlobResult = await upload(coverFile.name, coverFile, {
-          access: "public",
-          handleUploadUrl: "/api/knowledge/upload",
-          contentType: "image/jpeg",
-        })
-        coverUrl = coverBlobResult.url
+        try {
+          const coverFile = new File([coverBlob], `${title.trim()}-cover.jpg`, { type: "image/jpeg" })
+          const coverBlobResult = await upload(coverFile.name, coverFile, {
+            access: "public",
+            handleUploadUrl: "/api/knowledge/upload",
+            contentType: "image/jpeg",
+          })
+          coverUrl = coverBlobResult.url
+        } catch {
+          // Cover upload failing is non-critical
+        }
       }
 
       // Step 4: save metadata + segments to DB
-      setProgress("Saving…")
+      setProgress("Saving to database…")
       const res = await fetch("/api/knowledge", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           title: title.trim(),
           author: author.trim() || "Unknown",
-          fileUrl: blob.url,
-          fileBlobKey: blob.pathname,
+          fileUrl,
+          fileBlobKey,
           coverUrl,
           fileSize: file.size,
           fileType: detectDocType(file),
@@ -221,7 +244,7 @@ export function KnowledgeUploadForm() {
 
       if (!res.ok) {
         const text = await res.text()
-        throw new Error(text || `Upload failed (${res.status})`)
+        throw new Error(`Save failed (${res.status}): ${text}`)
       }
 
       router.push("/knowledge")
