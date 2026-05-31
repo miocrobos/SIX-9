@@ -1,14 +1,10 @@
 "use client"
 
 /**
- * Knowledge upload form.
+ * Knowledge upload form — closely mirrors the PDF Uploader's UploadForm + parsePDFFile logic.
  *
- * Intentionally does NO client-side parsing — pdfjs-dist v5 breaks in
- * Turbopack's browser bundle (ReadableStream incompatibility).  Instead:
- *  1. Upload the raw file to Vercel Blob directly from the browser.
- *  2. POST the resulting URL + metadata to /api/knowledge.
- *  3. The server downloads the file and does all text extraction there
- *     (pdf-parse for PDFs, mammoth for Word, xlsx for Excel).
+ * KEY: pdfjs-dist worker MUST use `import.meta.url` so Turbopack traces it at build time.
+ * Any other approach (CDN string, local public path) breaks in Next.js 16 / Turbopack.
  */
 
 import { useCallback, useRef, useState } from "react"
@@ -18,32 +14,33 @@ import { FileSpreadsheet, FileText, FileType, Loader2, Upload, X } from "lucide-
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 
-// ─── Accepted file types ─────────────────────────────────────────────────────
-
-const ACCEPTED = ".pdf,.docx,.doc,.xlsx,.xls"
+// ─── Types ────────────────────────────────────────────────────────────────────
 
 type DocType = "pdf" | "word" | "excel" | "unknown"
+
+interface TextSegment {
+  text: string
+  segmentIndex: number
+  wordCount: number
+}
+
+interface ParsedDoc {
+  segments: TextSegment[]
+  coverDataURL: string | null
+}
+
+// ─── Helpers ──────────────────────────────────────────────────────────────────
 
 function detectDocType(file: File): DocType {
   const ext = file.name.split(".").pop()?.toLowerCase()
   if (file.type === "application/pdf" || ext === "pdf") return "pdf"
-  if (
-    file.type.includes("wordprocessingml") ||
-    file.type === "application/msword" ||
-    ext === "docx" || ext === "doc"
-  )
-    return "word"
-  if (
-    file.type.includes("spreadsheetml") ||
-    file.type === "application/vnd.ms-excel" ||
-    ext === "xlsx" || ext === "xls"
-  )
-    return "excel"
+  if (file.type.includes("wordprocessingml") || file.type === "application/msword" || ext === "docx" || ext === "doc") return "word"
+  if (file.type.includes("spreadsheetml") || file.type === "application/vnd.ms-excel" || ext === "xlsx" || ext === "xls") return "excel"
   return "unknown"
 }
 
 function fileIcon(type: DocType) {
-  if (type === "pdf")   return <FileText       className="h-5 w-5 shrink-0 text-accent-primary" />
+  if (type === "pdf")   return <FileText className="h-5 w-5 shrink-0 text-accent-primary" />
   if (type === "excel") return <FileSpreadsheet className="h-5 w-5 shrink-0 text-green-500" />
   return <FileType className="h-5 w-5 shrink-0 text-blue-500" />
 }
@@ -52,47 +49,133 @@ function cleanTitle(filename: string) {
   return filename.replace(/\.(pdf|docx|doc|xlsx|xls)$/i, "").replace(/[-_]/g, " ")
 }
 
+/** Split text into overlapping segments — mirrors PDF Uploader's splitIntoSegments */
+function splitIntoSegments(text: string, segmentSize = 500, overlapSize = 50): TextSegment[] {
+  const words = text.split(/\s+/).filter((w) => w.length > 0)
+  const segments: TextSegment[] = []
+  let idx = 0
+  let start = 0
+  while (start < words.length) {
+    const end = Math.min(start + segmentSize, words.length)
+    const chunk = words.slice(start, end)
+    segments.push({ text: chunk.join(" "), segmentIndex: idx++, wordCount: chunk.length })
+    if (end >= words.length) break
+    start = end - overlapSize
+  }
+  return segments
+}
+
+// ─── PDF parser — EXACT copy of PDF Uploader's parsePDFFile ──────────────────
+
+async function parsePDFFile(file: File): Promise<ParsedDoc> {
+  const pdfjsLib = await import("pdfjs-dist")
+
+  // This is the critical line — import.meta.url lets Turbopack trace the worker at build time
+  if (typeof window !== "undefined") {
+    pdfjsLib.GlobalWorkerOptions.workerSrc = new URL(
+      "pdfjs-dist/build/pdf.worker.min.mjs",
+      import.meta.url
+    ).toString()
+  }
+
+  const arrayBuffer = await file.arrayBuffer()
+  const loadingTask = pdfjsLib.getDocument({ data: arrayBuffer })
+  const pdfDocument = await loadingTask.promise
+
+  // Render first page as cover
+  let coverDataURL: string | null = null
+  try {
+    const firstPage = await pdfDocument.getPage(1)
+    const viewport = firstPage.getViewport({ scale: 1.5 })
+    const canvas = document.createElement("canvas")
+    canvas.width = viewport.width
+    canvas.height = viewport.height
+    const context = canvas.getContext("2d")!
+    await firstPage.render({ canvasContext: context, viewport }).promise
+    coverDataURL = canvas.toDataURL("image/jpeg", 0.85)
+  } catch {
+    // Cover is decorative — continue without it
+  }
+
+  // Extract text from all pages
+  let fullText = ""
+  for (let pageNum = 1; pageNum <= pdfDocument.numPages; pageNum++) {
+    const page = await pdfDocument.getPage(pageNum)
+    const textContent = await page.getTextContent()
+    const pageText = textContent.items
+      .filter((item) => "str" in item)
+      .map((item) => (item as { str: string }).str)
+      .join(" ")
+    fullText += pageText + "\n"
+  }
+
+  await pdfDocument.destroy()
+  return { segments: splitIntoSegments(fullText), coverDataURL }
+}
+
+// ─── Word parser ──────────────────────────────────────────────────────────────
+
+async function parseWordFile(file: File): Promise<ParsedDoc> {
+  const mammoth = await import("mammoth")
+  const arrayBuffer = await file.arrayBuffer()
+  const result = await mammoth.extractRawText({ arrayBuffer })
+  return { segments: splitIntoSegments(result.value), coverDataURL: null }
+}
+
+// ─── Excel parser ─────────────────────────────────────────────────────────────
+
+async function parseExcelFile(file: File): Promise<ParsedDoc> {
+  const XLSX = await import("xlsx")
+  const arrayBuffer = await file.arrayBuffer()
+  const workbook = XLSX.read(arrayBuffer, { type: "array" })
+  const lines: string[] = []
+  for (const sheetName of workbook.SheetNames) {
+    const sheet = workbook.Sheets[sheetName]
+    lines.push(`[Sheet: ${sheetName}]\n${XLSX.utils.sheet_to_csv(sheet)}`)
+  }
+  return { segments: splitIntoSegments(lines.join("\n\n")), coverDataURL: null }
+}
+
+async function parseDocument(file: File): Promise<ParsedDoc> {
+  const type = detectDocType(file)
+  if (type === "pdf")   return parsePDFFile(file)
+  if (type === "word")  return parseWordFile(file)
+  if (type === "excel") return parseExcelFile(file)
+  throw new Error("Unsupported file type")
+}
+
 // ─── Component ────────────────────────────────────────────────────────────────
 
 export function KnowledgeUploadForm() {
   const router = useRouter()
   const fileRef = useRef<HTMLInputElement>(null)
-  const [file, setFile]       = useState<File | null>(null)
-  const [title, setTitle]     = useState("")
-  const [author, setAuthor]   = useState("")
+  const [file, setFile]         = useState<File | null>(null)
+  const [title, setTitle]       = useState("")
+  const [author, setAuthor]     = useState("")
   const [uploading, setUploading] = useState(false)
   const [progress, setProgress]   = useState("")
   const [error, setError]         = useState<string | null>(null)
 
-  const acceptFile = useCallback(
-    (f: File) => {
-      if (detectDocType(f) === "unknown") {
-        setError("Please upload a PDF, Word (.docx), or Excel (.xlsx) file.")
-        return
-      }
-      setError(null)
-      setFile(f)
-      if (!title) setTitle(cleanTitle(f.name))
-    },
-    [title]
-  )
+  const acceptFile = useCallback((f: File) => {
+    if (detectDocType(f) === "unknown") {
+      setError("Please upload a PDF, Word (.docx), or Excel (.xlsx) file.")
+      return
+    }
+    setError(null)
+    setFile(f)
+    if (!title) setTitle(cleanTitle(f.name))
+  }, [title])
 
   const handleFileChange = useCallback(
-    (e: React.ChangeEvent<HTMLInputElement>) => {
-      const f = e.target.files?.[0]
-      if (f) acceptFile(f)
-    },
+    (e: React.ChangeEvent<HTMLInputElement>) => { const f = e.target.files?.[0]; if (f) acceptFile(f) },
     [acceptFile]
   )
 
-  const handleDrop = useCallback(
-    (e: React.DragEvent<HTMLDivElement>) => {
-      e.preventDefault()
-      const f = e.dataTransfer.files[0]
-      if (f) acceptFile(f)
-    },
-    [acceptFile]
-  )
+  const handleDrop = useCallback((e: React.DragEvent<HTMLDivElement>) => {
+    e.preventDefault()
+    const f = e.dataTransfer.files[0]
+    if (f) acceptFile(f)
+  }, [acceptFile])
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -101,26 +184,55 @@ export function KnowledgeUploadForm() {
     setUploading(true)
 
     try {
-      // Step 1 — upload raw file to Vercel Blob (no parsing here)
+      // Step 1 — parse document client-side (same as PDF Uploader)
+      setProgress("Parsing document…")
+      const { segments, coverDataURL } = await parseDocument(file)
+
+      if (segments.length === 0) {
+        throw new Error("Could not extract text from this file. Please try another.")
+      }
+
+      // Step 2 — upload raw file to Vercel Blob
       setProgress("Uploading file…")
-      const blobResult = await upload(title.trim(), file, {
+      const fileTitle = title.trim().replace(/\s+/g, "-").toLowerCase()
+      const uploadedFile = await upload(fileTitle, file, {
         access: "public",
         handleUploadUrl: "/api/knowledge/upload",
         contentType: file.type || "application/octet-stream",
       })
 
-      // Step 2 — send URL + metadata to server; server parses and saves
-      setProgress("Processing document…")
+      // Step 3 — upload cover image to Vercel Blob (if we got one)
+      let coverUrl: string | undefined
+      if (coverDataURL) {
+        setProgress("Uploading cover…")
+        try {
+          const coverRes  = await fetch(coverDataURL)
+          const coverBlob = await coverRes.blob()
+          const uploaded  = await upload(`${fileTitle}_cover.jpg`, coverBlob, {
+            access: "public",
+            handleUploadUrl: "/api/knowledge/upload",
+            contentType: "image/jpeg",
+          })
+          coverUrl = uploaded.url
+        } catch {
+          // Cover is optional — continue without it
+        }
+      }
+
+      // Step 4 — save metadata + segments to DB
+      setProgress("Saving…")
       const res = await fetch("/api/knowledge", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           title:       title.trim(),
           author:      author.trim() || "Unknown",
-          fileUrl:     blobResult.url,
-          fileBlobKey: blobResult.pathname,
+          fileUrl:     uploadedFile.url,
+          fileBlobKey: uploadedFile.pathname,
+          coverUrl,
           fileSize:    file.size,
           fileType:    detectDocType(file),
+          segments:    segments.map((s) => s.text),
         }),
       })
 
@@ -157,7 +269,7 @@ export function KnowledgeUploadForm() {
         <input
           ref={fileRef}
           type="file"
-          accept={ACCEPTED}
+          accept=".pdf,.docx,.doc,.xlsx,.xls"
           className="hidden"
           onChange={handleFileChange}
         />
@@ -172,11 +284,7 @@ export function KnowledgeUploadForm() {
             </div>
             <button
               type="button"
-              onClick={(e) => {
-                e.stopPropagation()
-                setFile(null)
-                setTitle("")
-              }}
+              onClick={(e) => { e.stopPropagation(); setFile(null); setTitle("") }}
               className="shrink-0 p-1 rounded-lg hover:bg-bg-elevated transition-colors"
             >
               <X className="h-4 w-4 text-text-muted" />
@@ -199,20 +307,11 @@ export function KnowledgeUploadForm() {
           <label className="text-sm font-medium text-text-primary block mb-1.5">
             Title <span className="text-accent-primary">*</span>
           </label>
-          <Input
-            value={title}
-            onChange={(e) => setTitle(e.target.value)}
-            placeholder="Document title"
-            required
-          />
+          <Input value={title} onChange={(e) => setTitle(e.target.value)} placeholder="Document title" required />
         </div>
         <div>
           <label className="text-sm font-medium text-text-primary block mb-1.5">Author</label>
-          <Input
-            value={author}
-            onChange={(e) => setAuthor(e.target.value)}
-            placeholder="Author or source (optional)"
-          />
+          <Input value={author} onChange={(e) => setAuthor(e.target.value)} placeholder="Author or source (optional)" />
         </div>
       </div>
 
@@ -224,16 +323,9 @@ export function KnowledgeUploadForm() {
       )}
 
       {/* Submit */}
-      <Button
-        type="submit"
-        disabled={!file || !title.trim() || uploading}
-        className="w-full"
-      >
+      <Button type="submit" disabled={!file || !title.trim() || uploading} className="w-full">
         {uploading ? (
-          <>
-            <Loader2 className="h-4 w-4 animate-spin mr-2" />
-            {progress || "Uploading…"}
-          </>
+          <><Loader2 className="h-4 w-4 animate-spin mr-2" />{progress || "Uploading…"}</>
         ) : (
           "Upload to Knowledge Base"
         )}
