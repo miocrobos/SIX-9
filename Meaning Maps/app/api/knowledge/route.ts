@@ -1,14 +1,10 @@
 /**
- * GET  /api/knowledge  — list all docs (with optional search query)
- * POST /api/knowledge  — upload + parse a document, save to DB
+ * GET  /api/knowledge  — list all docs (optional ?q= search)
+ * POST /api/knowledge  — save a parsed document + segments to DB
  *
- * Parsing happens here (server / Node.js) so we avoid browser incompatibilities
- * with pdfjs-dist v5's ReadableStream usage inside Turbopack bundles.
- *
- * Supported formats:
- *   PDF  → pdf-parse (Node.js, no worker needed)
- *   Word → mammoth
- *   Excel→ xlsx
+ * Parsing happens CLIENT-side (same pattern as PDF Uploader).
+ * The client sends pre-parsed text segments so the server only needs to persist.
+ * Server-side extraction (pdf-parse) is kept as a fallback when segments are absent.
  */
 
 import { auth } from "@clerk/nextjs/server"
@@ -17,43 +13,30 @@ import { createKnowledgeDoc } from "@/lib/knowledge"
 import { getAllKnowledgeDocs } from "@/lib/resources"
 import { splitIntoSegments } from "@/lib/pdf-utils"
 
-// ─── Helpers ──────────────────────────────────────────────────────────────────
+// ─── Server-side fallback extractor (when client sends no segments) ───────────
 
-async function fetchFileBuffer(url: string): Promise<Buffer> {
-  const res = await fetch(url)
-  if (!res.ok) throw new Error(`Failed to fetch file from Blob (${res.status})`)
-  const ab = await res.arrayBuffer()
-  return Buffer.from(ab)
-}
-
-async function extractText(fileUrl: string, fileType: string): Promise<string> {
-  const buf = await fetchFileBuffer(fileUrl)
+async function extractTextServerSide(fileUrl: string, fileType: string): Promise<string> {
+  const res = await fetch(fileUrl)
+  if (!res.ok) return ""
+  const buf = Buffer.from(await res.arrayBuffer())
 
   if (fileType === "pdf") {
-    // pdf-parse: pure Node.js, no browser worker needed
     const pdfParse = (await import("pdf-parse")).default
     const data = await pdfParse(buf)
     return data.text ?? ""
   }
-
   if (fileType === "word") {
     const mammoth = await import("mammoth")
-    const result = await mammoth.extractRawText({ buffer: buf })
+    const result  = await mammoth.extractRawText({ buffer: buf })
     return result.value ?? ""
   }
-
   if (fileType === "excel") {
     const XLSX = await import("xlsx")
-    const workbook = XLSX.read(buf, { type: "buffer" })
-    const lines: string[] = []
-    for (const sheetName of workbook.SheetNames) {
-      const sheet = workbook.Sheets[sheetName]
-      const csv = XLSX.utils.sheet_to_csv(sheet)
-      lines.push(`[Sheet: ${sheetName}]\n${csv}`)
-    }
-    return lines.join("\n\n")
+    const wb   = XLSX.read(buf, { type: "buffer" })
+    return wb.SheetNames
+      .map((n) => `[Sheet: ${n}]\n${XLSX.utils.sheet_to_csv(wb.Sheets[n])}`)
+      .join("\n\n")
   }
-
   return ""
 }
 
@@ -65,7 +48,7 @@ export async function GET(request: Request) {
 
   const { searchParams } = new URL(request.url)
   const search = searchParams.get("q") ?? undefined
-  const docs = await getAllKnowledgeDocs(search)
+  const docs   = await getAllKnowledgeDocs(search)
   return NextResponse.json(docs)
 }
 
@@ -77,8 +60,11 @@ interface CreateKnowledgeDocBody {
   persona?: string
   fileUrl: string
   fileBlobKey?: string
+  coverUrl?: string
   fileSize?: number
   fileType?: string
+  /** Pre-parsed text segments from the client. If omitted, server extracts. */
+  segments?: string[]
 }
 
 export async function POST(request: Request) {
@@ -93,24 +79,21 @@ export async function POST(request: Request) {
   }
 
   if (!body.title || !body.fileUrl) {
-    return NextResponse.json(
-      { error: "Missing required fields: title, fileUrl" },
-      { status: 400 }
-    )
+    return NextResponse.json({ error: "Missing required fields: title, fileUrl" }, { status: 400 })
   }
 
-  // ── Extract text server-side ───────────────────────────────────────────────
-  let segments: string[] = []
-  try {
-    const text = await extractText(body.fileUrl, body.fileType ?? "")
-    segments = splitIntoSegments(text)
-  } catch (parseErr) {
-    console.error("[knowledge POST] text extraction failed:", parseErr)
-    // Non-fatal — save with empty segments; user can still chat but RAG is empty
-    segments = []
+  // Use client-provided segments or fall back to server-side extraction
+  let segments: string[] = body.segments ?? []
+
+  if (segments.length === 0 && body.fileUrl) {
+    try {
+      const text = await extractTextServerSide(body.fileUrl, body.fileType ?? "")
+      segments   = splitIntoSegments(text)
+    } catch (err) {
+      console.error("[knowledge POST] server extraction failed:", err)
+    }
   }
 
-  // ── Persist ───────────────────────────────────────────────────────────────
   try {
     const doc = await createKnowledgeDoc({
       ownerId:     userId,
@@ -119,7 +102,7 @@ export async function POST(request: Request) {
       persona:     body.persona,
       fileUrl:     body.fileUrl,
       fileBlobKey: body.fileBlobKey ?? body.fileUrl,
-      coverUrl:    undefined,
+      coverUrl:    body.coverUrl,
       fileSize:    body.fileSize ?? 0,
       segments,
     })
@@ -127,9 +110,6 @@ export async function POST(request: Request) {
     return NextResponse.json(doc, { status: 201 })
   } catch (err) {
     console.error("[knowledge POST] Prisma error:", err)
-    return NextResponse.json(
-      { error: "Failed to save document. Check server logs." },
-      { status: 500 }
-    )
+    return NextResponse.json({ error: "Failed to save document. Check server logs." }, { status: 500 })
   }
 }
