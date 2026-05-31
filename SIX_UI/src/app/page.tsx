@@ -107,15 +107,7 @@ export default function LandingPage() {
         <div className="max-w-6xl mx-auto px-6 h-16 flex items-center justify-between">
           {/* Logo */}
           <Link href="/" className="flex items-center gap-3">
-            <Image src="/six-logo.png" alt="SIX" width={52} height={26} priority style={{ filter: 'brightness(0) saturate(100%) invert(19%) sepia(100%) saturate(5000%) hue-rotate(353deg) brightness(85%)' }} />
-            <Image
-              src="/sense-logo.png"
-              alt="SENSE"
-              width={52}
-              height={26}
-              priority
-              style={{ filter: 'brightness(0) saturate(100%) invert(19%) sepia(100%) saturate(5000%) hue-rotate(353deg) brightness(85%)' }}
-            />
+            <Image src="/Six-Sense.png" alt="SIX SENSE" width={120} height={26} priority />
           </Link>
 
           {/* Desktop nav */}
@@ -331,7 +323,7 @@ export default function LandingPage() {
       <footer style={{ borderTop: '1px solid var(--lp-border)', background: 'var(--lp-bg)' }}>
         <div className="max-w-6xl mx-auto px-6 py-8 flex flex-col md:flex-row items-center justify-between gap-4">
           <div className="flex items-center gap-3">
-            <Image src="/six-logo.png" alt="SIX" width={40} height={20} style={{ filter: 'brightness(0) saturate(100%) invert(19%) sepia(100%) saturate(5000%) hue-rotate(353deg) brightness(85%)' }} />
+            <Image src="/Six-Sense.png" alt="SIX SENSE" width={72} height={20} />
             <span style={{ fontWeight: 700, fontSize: '0.8rem', color: 'var(--lp-text-faint)' }}>Knowledge Hub · Internal Platform</span>
           </div>
           <p style={{ fontSize: '0.8rem', color: 'var(--lp-text-dim)', fontWeight: 400 }}>

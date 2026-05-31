@@ -47,15 +47,7 @@ export default function AppHeader() {
 
         {/* SIX Logo */}
         <Link href="/" className="flex items-center gap-2 flex-shrink-0 border-r border-[#E8E8E8] dark:border-[#1f1f1f] pr-3 md:pr-4">
-          <Image src="/six-logo.png" alt="SIX" width={48} height={13} priority style={{ filter: 'brightness(0) saturate(100%) invert(19%) sepia(100%) saturate(5000%) hue-rotate(353deg) brightness(85%)' }} />
-          <Image
-            src="/sense-logo.png"
-            alt="SENSE"
-            width={48}
-            height={13}
-            priority
-            style={{ filter: 'brightness(0) saturate(100%) invert(19%) sepia(100%) saturate(5000%) hue-rotate(353deg) brightness(85%)' }}
-          />
+          <Image src="/Six-Sense.png" alt="SIX SENSE" width={110} height={26} priority />
         </Link>
 
         {/* Mode-specific nav links — desktop only */}

@@ -47,21 +47,14 @@ export default function IntroAnimation({ onComplete }: IntroAnimationProps) {
       {/* Logo + red box stacked together */}
       <div style={{ position: 'relative', display: 'inline-flex', alignItems: 'center', justifyContent: 'center' }}>
 
-        {/* SIX logo — sits behind the red box, revealed as it fades */}
-        <div ref={logoRef} style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
+        {/* Primary logo sits behind the red box, revealed as it fades */}
+        <div ref={logoRef} style={{ display: 'flex', alignItems: 'center' }}>
           <Image
-            src="/six-logo.png"
-            alt="SIX"
-            width={160} height={80}
+            src="/Six-Sense.png"
+            alt="SIX SENSE"
+            width={336} height={80}
             priority
-            style={{ objectFit: 'contain', width: 'auto', height: 'auto', maxWidth: 160, maxHeight: 80, display: 'block', filter: 'brightness(0) saturate(100%) invert(19%) sepia(100%) saturate(5000%) hue-rotate(353deg) brightness(85%)' }}
-          />
-          <Image
-            src="/sense-logo.png"
-            alt="SENSE"
-            width={160} height={80}
-            priority
-            style={{ objectFit: 'contain', width: 'auto', height: 'auto', maxWidth: 160, maxHeight: 80, display: 'block', filter: 'brightness(0) saturate(100%) invert(19%) sepia(100%) saturate(5000%) hue-rotate(353deg) brightness(85%)' }}
+            style={{ objectFit: 'contain', width: 'auto', height: 'auto', maxWidth: 336, maxHeight: 80, display: 'block' }}
           />
         </div>
 
@@ -73,27 +66,16 @@ export default function IntroAnimation({ onComplete }: IntroAnimationProps) {
             top: -18, bottom: -18, left: -24, right: -24,
             background: '#D92525',
             borderRadius: 8,
-            display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 16,
+            display: 'flex', alignItems: 'center', justifyContent: 'center',
           }}
         >
           <Image
-            src="/six-logo.png"
-            alt="SIX"
-            width={160} height={80}
+            src="/Six-Sense.png"
+            alt="SIX SENSE"
+            width={336} height={80}
             style={{
               objectFit: 'contain', width: 'auto', height: 'auto',
-              maxWidth: 160, maxHeight: 80, display: 'block',
-              filter: 'brightness(0) invert(1)',
-            }}
-          />
-          <Image
-            src="/sense-logo.png"
-            alt="SENSE"
-            width={160} height={80}
-            style={{
-              objectFit: 'contain', width: 'auto', height: 'auto',
-              maxWidth: 160, maxHeight: 80, display: 'block',
-              filter: 'brightness(0) invert(1)',
+              maxWidth: 336, maxHeight: 80, display: 'block',
             }}
           />
         </div>

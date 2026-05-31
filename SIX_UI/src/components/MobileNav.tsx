@@ -98,7 +98,7 @@ export default function MobileNav() {
             <div className="px-5 py-5 border-b border-[#2A2A2A] flex items-center justify-between flex-shrink-0">
               <div className="flex items-center gap-3">
                 <div className="bg-[#D92525] rounded-xl px-2 py-1.5 flex items-center justify-center">
-                  <Image src="/six-logo.png" alt="SIX" width={48} height={13} priority className="brightness-0 invert" />
+                  <Image src="/Six-Sense.png" alt="SIX SENSE" width={96} height={24} priority />
                 </div>
                 <div>
                   <p className="font-bold text-white text-sm leading-tight">Knowledge</p>
