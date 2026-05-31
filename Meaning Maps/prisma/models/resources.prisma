@@ -1,0 +1,95 @@
+// ─── Document models ────────────────────────────────────────────────────────
+
+model Document {
+  id           String   @id @default(cuid())
+  ownerId      String
+  name         String
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  collaborators DocumentCollaborator[]
+
+  @@index([ownerId])
+  @@index([createdAt])
+}
+
+model DocumentCollaborator {
+  id         String   @id @default(cuid())
+  documentId String
+  email      String
+  createdAt  DateTime @default(now())
+
+  document Document @relation(fields: [documentId], references: [id], onDelete: Cascade)
+
+  @@unique([documentId, email])
+  @@index([email])
+  @@index([documentId, createdAt])
+}
+
+// ─── Sheet models ────────────────────────────────────────────────────────────
+
+model Sheet {
+  id        String   @id @default(cuid())
+  ownerId   String
+  name      String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  collaborators SheetCollaborator[]
+
+  @@index([ownerId])
+  @@index([createdAt])
+}
+
+model SheetCollaborator {
+  id        String   @id @default(cuid())
+  sheetId   String
+  email     String
+  createdAt DateTime @default(now())
+
+  sheet Sheet @relation(fields: [sheetId], references: [id], onDelete: Cascade)
+
+  @@unique([sheetId, email])
+  @@index([email])
+  @@index([sheetId, createdAt])
+}
+
+// ─── Knowledge (PDF/document ingest) models ──────────────────────────────────
+
+model KnowledgeDoc {
+  id             String   @id @default(cuid())
+  ownerId        String
+  title          String
+  author         String
+  slug           String   @unique
+  persona        String?
+  fileUrl        String
+  fileBlobKey    String
+  coverUrl       String?
+  coverBlobKey   String?
+  fileSize       Int
+  totalSegments  Int      @default(0)
+  summary        String?
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  segments KnowledgeSegment[]
+
+  @@index([ownerId])
+  @@index([createdAt])
+}
+
+model KnowledgeSegment {
+  id             String   @id @default(cuid())
+  ownerId        String
+  docId          String
+  content        String
+  segmentIndex   Int
+  pageNumber     Int?
+  wordCount      Int
+
+  doc KnowledgeDoc @relation(fields: [docId], references: [id], onDelete: Cascade)
+
+  @@unique([docId, segmentIndex])
+  @@index([docId])
+}

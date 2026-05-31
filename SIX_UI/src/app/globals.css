@@ -1,0 +1,423 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --font-inter: 'Inter', system-ui, sans-serif;
+    --background: 220 14% 96%;
+    --foreground: 0 0% 10%;
+    --card: 0 0% 100%;
+    --card-foreground: 0 0% 10%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 0 0% 10%;
+    /* Primary = SIX red #D92525 */
+    --primary: 0 74% 50%;
+    --primary-foreground: 0 0% 100%;
+    /* Secondary = light gray */
+    --secondary: 220 14% 96%;
+    --secondary-foreground: 0 0% 10%;
+    --muted: 220 14% 93%;
+    --muted-foreground: 220 9% 46%;
+    /* Accent = SIX red tint */
+    --accent: 0 74% 96%;
+    --accent-foreground: 0 74% 40%;
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 100%;
+    --border: 220 13% 91%;
+    --input: 220 13% 91%;
+    --ring: 0 74% 50%;
+    --radius: 0.75rem;
+    /* Animation overlay */
+    --overlay-bg: #fff;
+    --overlay-text: #000;
+    /* Landing page surface tokens */
+    --lp-bg: #fff;
+    --lp-bg-2: #F7F7F7;
+    --lp-card: #fff;
+    --lp-text: #0A0A0A;
+    --lp-text-sub: #555;
+    --lp-text-muted: #666;
+    --lp-text-faint: #888;
+    --lp-text-dim: #AAA;
+    --lp-border: #E8E8E8;
+    --lp-step-n: #000000;
+  }
+
+  .dark {
+    --background: 0 0% 0%;
+    --foreground: 0 0% 98%;
+    --card: 0 0% 8%;
+    --card-foreground: 0 0% 98%;
+    --popover: 0 0% 4%;
+    --popover-foreground: 0 0% 98%;
+    --primary: 0 74% 50%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 0 0% 8%;
+    --secondary-foreground: 0 0% 98%;
+    --muted: 0 0% 10%;
+    --muted-foreground: 0 0% 52%;
+    --accent: 0 74% 15%;
+    --accent-foreground: 0 74% 70%;
+    --destructive: 0 62% 48%;
+    --destructive-foreground: 0 0% 100%;
+    --border: 0 0% 20%;
+    --input: 0 0% 20%;
+    --ring: 0 74% 50%;
+    /* Animation overlay */
+    --overlay-bg: #000;
+    --overlay-text: #fff;
+    /* Landing page surface tokens */
+    --lp-bg: #000;
+    --lp-bg-2: #0d0d0d;
+    --lp-card: #111;
+    --lp-text: #f0f0f0;
+    --lp-text-sub: #bbb;
+    --lp-text-muted: #aaa;
+    --lp-text-faint: #888;
+    --lp-text-dim: #666;
+    --lp-border: #1f1f1f;
+    --lp-step-n: #ffffff;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  /* Global default: pure black in light, pure white in dark — for all non-red text */
+  body {
+    @apply text-black dark:text-white;
+  }
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+  overflow-y: scroll;
+}
+
+body {
+  overscroll-behavior-y: none;
+  text-rendering: optimizeLegibility;
+}
+
+/* ── SIX INTRO ANIMATION ──────────────────────────────────── */
+
+/* White overlay — stays opaque, then fades at the very end */
+@keyframes sixIntroOverlay {
+  0%, 85%  { opacity: 1; }
+  98%      { opacity: 0; }
+  100%     { opacity: 0; pointer-events: none; }
+}
+
+/* Red box: fades in, holds, then fades out revealing the logo */
+@keyframes sixRedBox {
+  0%       { opacity: 0;   transform: scale(0.92); }
+  14%      { opacity: 1;   transform: scale(1);    }
+  44%      { opacity: 1;   transform: scale(1);    }
+  66%      { opacity: 0;   transform: scale(1.04); }
+  100%     { opacity: 0; }
+}
+
+/* Logo: hidden while red box is opaque, fades in as box fades out */
+@keyframes sixIntroLogo {
+  0%, 38%  { opacity: 0; }
+  62%      { opacity: 1; }
+  85%      { opacity: 1; }
+  97%      { opacity: 0; }
+  100%     { opacity: 0; }
+}
+
+/* Dark-mode intro: make red box exit much faster */
+@keyframes sixRedBoxDark {
+  0%       { opacity: 0;   transform: scale(0.92); }
+  10%      { opacity: 1;   transform: scale(1);    }
+  26%      { opacity: 1;   transform: scale(1);    }
+  40%      { opacity: 0;   transform: scale(1.05); }
+  100%     { opacity: 0; }
+}
+
+/* Dark-mode intro: reveal logo earlier and keep it visible longer */
+@keyframes sixIntroLogoDark {
+  0%, 18%  { opacity: 0; }
+  34%      { opacity: 1; }
+  92%      { opacity: 1; }
+  100%     { opacity: 0; }
+}
+
+/* Dark-mode intro: show slogan earlier and hold it longer */
+@keyframes sixIntroTaglineDark {
+  0%, 10%  { opacity: 0; transform: translateY(5px); }
+  20%      { opacity: 1; transform: translateY(0);   }
+  94%      { opacity: 1; }
+  100%     { opacity: 0; }
+}
+
+/* Dark-mode intro: keep overlay while slogan is visible, then fade */
+@keyframes sixIntroOverlayDark {
+  0%, 92%  { opacity: 1; }
+  100%     { opacity: 0; pointer-events: none; }
+}
+
+/* Tagline: appears after logo is revealed, holds, fades out */
+@keyframes sixIntroTagline {
+  0%, 62%  { opacity: 0; transform: translateY(5px); }
+  74%      { opacity: 1; transform: translateY(0);   }
+  85%      { opacity: 1; }
+  97%      { opacity: 0; }
+  100%     { opacity: 0; }
+}
+
+/* ── PAGE TRANSITION (Knowledge Hub, SIX Note) ───────────────── */
+@keyframes pgOverlay {
+  0%, 85%  { opacity: 1; }
+  98%      { opacity: 0; }
+  100%     { opacity: 0; pointer-events: none; }
+}
+@keyframes pgRedBox {
+  0%       { opacity: 0;   transform: scale(0.90); }
+  14%      { opacity: 1;   transform: scale(1);    }
+  44%      { opacity: 1;   transform: scale(1);    }
+  66%      { opacity: 0;   transform: scale(1.04); }
+  100%     { opacity: 0; }
+}
+@keyframes pgIcon {
+  0%, 38%  { opacity: 0; }
+  62%      { opacity: 1; }
+  85%      { opacity: 1; }
+  97%      { opacity: 0; }
+  100%     { opacity: 0; }
+}
+/* Gentle shake while the red box is visible */
+@keyframes pgIconWiggle {
+  0%, 14%  { transform: rotate(0deg); }
+  20%      { transform: rotate(-11deg); }
+  27%      { transform: rotate(11deg); }
+  34%      { transform: rotate(-6deg); }
+  40%      { transform: rotate(0deg); }
+  100%     { transform: rotate(0deg); }
+}
+@keyframes pgQuote {
+  0%, 62%  { opacity: 0; transform: translateY(6px); }
+  74%      { opacity: 1; transform: translateY(0);   }
+  85%      { opacity: 1; }
+  97%      { opacity: 0; }
+  100%     { opacity: 0; }
+}
+
+
+body {
+  background-color: #F7F8FC;
+  color: #1A1A1A;
+  font-family: var(--font-inter);
+  -webkit-font-smoothing: antialiased;
+}
+
+@layer components {
+  .six-card {
+    background-color: #ffffff;
+    border: 1.5px solid #E8E8F0;
+    border-radius: 1rem;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.05);
+  }
+
+  .dark .six-card {
+    background-color: #141414;
+    border-color: #333333;
+    box-shadow: none;
+  }
+
+  .duo-btn-secondary {
+    @apply bg-transparent border-2 border-[#E0E0E8] text-[#1A1A1A] font-bold py-3 px-6 rounded-2xl
+           hover:border-[#CCCCDD] hover:bg-[#F5F5F7] active:translate-y-0.5 transition-all cursor-pointer select-none;
+  }
+
+  .progress-bar {
+    @apply h-3 bg-[#E8E8F0] rounded-full overflow-hidden;
+  }
+
+  .progress-fill {
+    @apply h-full rounded-full transition-all duration-700 ease-out;
+  }
+}
+
+/* Button classes — using raw CSS to avoid @apply + custom-color issues with Turbopack */
+.duo-btn-primary {
+  background-color: #58CC02;
+  color: #ffffff;
+  font-weight: 700;
+  padding: 0.75rem 1.5rem;
+  border-radius: 1rem;
+  box-shadow: 0 4px 0 #46A302;
+  cursor: pointer;
+  user-select: none;
+  transition: transform 0.15s ease, box-shadow 0.15s ease, background-color 0.15s ease;
+  display: inline-block;
+}
+.duo-btn-primary:hover {
+  background-color: #46A302;
+  box-shadow: 0 2px 0 #46A302;
+}
+.duo-btn-primary:active {
+  transform: translateY(2px);
+  box-shadow: none;
+}
+
+.gold-btn {
+  background-color: #D92525;
+  color: #FFFFFF;
+  font-weight: 700;
+  padding: 0.75rem 1.5rem;
+  border-radius: 1rem;
+  box-shadow: 0 4px 0 #A01B10;
+  cursor: pointer;
+  user-select: none;
+  transition: transform 0.15s ease, box-shadow 0.15s ease, background-color 0.15s ease;
+  display: inline-block;
+}
+.gold-btn:hover {
+  background-color: #E8341F;
+  box-shadow: 0 2px 0 #A01B10;
+}
+.gold-btn:active {
+  transform: translateY(2px);
+  box-shadow: none;
+}
+
+.xp-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  background-color: #FDF0F0;
+  border: 1px solid rgba(217, 37, 37, 0.2);
+  color: #D92525;
+  font-size: 0.75rem;
+  font-weight: 700;
+  padding: 0.125rem 0.5rem;
+  border-radius: 9999px;
+}
+
+.streak-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  background-color: rgba(255, 150, 0, 0.1);
+  border: 1px solid rgba(255, 150, 0, 0.3);
+  color: #FF9600;
+  font-size: 0.875rem;
+  font-weight: 700;
+  padding: 0.25rem 0.75rem;
+  border-radius: 9999px;
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: #111; }
+::-webkit-scrollbar-thumb { background: #333; border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: #555; }
+
+/* Node connector lines for DuoKnow */
+.duo-path::after {
+  content: '';
+  position: absolute;
+  left: 50%;
+  bottom: -2.5rem;
+  transform: translateX(-50%);
+  width: 3px;
+  height: 2.5rem;
+  background: linear-gradient(to bottom, #2A2A2A, transparent);
+}
+
+/* ── DARK MODE GLOBAL OVERRIDES ──────────────────────────────────
+   High-specificity rules that override hardcoded Tailwind utilities
+   across every page automatically when .dark is on <html>.
+──────────────────────────────────────────────────────────────── */
+html.dark .bg-white       { background-color: #0a0a0a; }
+html.dark .bg-gray-50     { background-color: #0a0a0a; }
+html.dark .bg-gray-100    { background-color: #111; }
+html.dark .bg-\[\#F7F8FC\] { background-color: #000; }
+html.dark .bg-\[\#F5F5F7\] { background-color: #111; }
+html.dark .hover\:bg-\[\#F5F5F7\]:hover { background-color: #111; }
+html.dark .text-\[\#1A1A1A\]  { color: #D92525; }
+html.dark .text-gray-700  { color: #c8c8c8; }
+html.dark .border-\[\#E8E8E8\] { border-color: #1f1f1f; }
+html.dark .border-\[\#E8E8F0\] { border-color: #1f1f1f; }
+html.dark .divide-\[\#E8E8E8\] > * + * { border-color: #1f1f1f; }
+
+/* ── FEATURE EXPAND CARDS (landing page) ───────────────────── */
+.feature-row {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 16px;
+}
+
+/* Hide collapsed view on mobile – only used in desktop flex mode */
+.feature-collapsed-view {
+  display: none !important;
+}
+
+@media (min-width: 600px) {
+  .feature-row {
+    display: flex;
+    align-items: stretch;
+    gap: 8px;
+  }
+
+  /* Default: each card collapses to icon width */
+  .feature-card-wrapper {
+    flex: 0 0 68px;
+    transition: flex 0.42s cubic-bezier(0.22, 1, 0.36, 1);
+    cursor: pointer;
+  }
+
+  /* Expanded card fills remaining space */
+  .feature-card-wrapper:hover,
+  .feature-card-wrapper:focus-visible {
+    flex: 1 1 auto;
+    min-width: 248px;
+  }
+
+  /* Show collapsed view (icon only) */
+  .feature-collapsed-view {
+    display: flex !important;
+    opacity: 1;
+    transform: scale(1);
+    transition: opacity 0.2s ease-out, transform 0.24s ease-out;
+    pointer-events: auto;
+  }
+
+  .feature-card-wrapper:hover .feature-collapsed-view,
+  .feature-card-wrapper:focus-visible .feature-collapsed-view {
+    opacity: 0;
+    transform: scale(0.92);
+    pointer-events: none;
+  }
+
+  /* Expanded content: hidden until card is expanded */
+  .feature-expanded-view {
+    opacity: 0;
+    transform: translateY(8px);
+    transition: opacity 0.28s ease-out 0.08s, transform 0.32s cubic-bezier(0.22, 1, 0.36, 1) 0.08s;
+    pointer-events: none;
+  }
+
+  .feature-card-wrapper:hover .feature-expanded-view,
+  .feature-card-wrapper:focus-visible .feature-expanded-view {
+    opacity: 1;
+    transform: translateY(0);
+    pointer-events: auto;
+  }
+
+  /* Card border/shadow boost when expanded */
+  .feature-card-wrapper:hover .feature-card-inner,
+  .feature-card-wrapper:focus-visible .feature-card-inner {
+    border-color: rgba(217, 37, 37, 0.3) !important;
+    box-shadow: 0 10px 36px rgba(0, 0, 0, 0.14) !important;
+    transform: translateY(-2px);
+  }
+}

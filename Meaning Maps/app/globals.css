@@ -1,0 +1,237 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+@import "shadcn/tailwind.css";
+
+/* Class-based dark mode: .dark on <html> activates dark styles */
+@custom-variant dark (&:is(.dark *));
+
+/* ─── Tailwind theme tokens ─────────────────────────────────────────────── */
+/* All tokens reference raw CSS variables so they respond to mode changes.   */
+@theme inline {
+  /* Surfaces */
+  --color-bg-base:     var(--raw-bg-base);
+  --color-bg-surface:  var(--raw-bg-surface);
+  --color-bg-elevated: var(--raw-bg-elevated);
+  --color-bg-subtle:   var(--raw-bg-subtle);
+
+  /* Borders */
+  --color-border-default: var(--raw-border-default);
+  --color-border-subtle:  var(--raw-border-subtle);
+
+  /* Text */
+  --color-text-primary:   var(--raw-text-primary);
+  --color-text-secondary: var(--raw-text-secondary);
+  --color-text-muted:     var(--raw-text-muted);
+  --color-text-faint:     var(--raw-text-faint);
+
+  /* Brand / accent */
+  --color-accent-primary:     var(--raw-accent-primary);
+  --color-accent-primary-dim: var(--raw-accent-primary-dim);
+  --color-accent-ai:          var(--raw-accent-ai);
+  --color-accent-ai-text:     var(--raw-accent-ai-text);
+
+  /* States */
+  --color-state-error:   var(--raw-state-error);
+  --color-state-success: var(--raw-state-success);
+  --color-state-warning: var(--raw-state-warning);
+
+  /* Radius scale */
+  --radius: 0.75rem;
+  --radius-sm:  calc(var(--radius) * 0.6);
+  --radius-md:  calc(var(--radius) * 0.8);
+  --radius-lg:  var(--radius);
+  --radius-xl:  calc(var(--radius) * 1.4);
+  --radius-2xl: calc(var(--radius) * 1.8);
+  --radius-3xl: calc(var(--radius) * 2.2);
+  --radius-4xl: calc(var(--radius) * 2.6);
+
+  /* Typography */
+  --font-heading: var(--font-geist-sans);
+  --font-sans:    var(--font-geist-sans);
+
+  /* shadcn semantic tokens (reference raw vars) */
+  --color-background:          var(--background);
+  --color-foreground:          var(--foreground);
+  --color-card:                var(--card);
+  --color-card-foreground:     var(--card-foreground);
+  --color-popover:             var(--popover);
+  --color-popover-foreground:  var(--popover-foreground);
+  --color-primary:             var(--primary);
+  --color-primary-foreground:  var(--primary-foreground);
+  --color-secondary:           var(--secondary);
+  --color-secondary-foreground: var(--secondary-secondary-foreground);
+  --color-muted:               var(--muted);
+  --color-muted-foreground:    var(--muted-foreground);
+  --color-accent:              var(--accent);
+  --color-accent-foreground:   var(--accent-foreground);
+  --color-destructive:         var(--destructive);
+  --color-border:              var(--border);
+  --color-input:               var(--input);
+  --color-ring:                var(--ring);
+  --color-sidebar-ring:              var(--sidebar-ring);
+  --color-sidebar-border:            var(--sidebar-border);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-accent:            var(--sidebar-accent);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-primary:           var(--sidebar-primary);
+  --color-sidebar-foreground:        var(--sidebar-foreground);
+  --color-sidebar:                   var(--sidebar);
+  --color-chart-1: var(--chart-1);
+  --color-chart-2: var(--chart-2);
+  --color-chart-3: var(--chart-3);
+  --color-chart-4: var(--chart-4);
+  --color-chart-5: var(--chart-5);
+}
+
+/* ─── Light mode (default) ──────────────────────────────────────────────── */
+:root {
+  /* Raw surface tokens */
+  --raw-bg-base:     #F7F8FC;
+  --raw-bg-surface:  #ffffff;
+  --raw-bg-elevated: #f1f3f5;
+  --raw-bg-subtle:   #e9ecef;
+
+  /* Raw border tokens */
+  --raw-border-default: #E8E8E8;
+  --raw-border-subtle:  #dee2e6;
+
+  /* Raw text tokens */
+  --raw-text-primary:   #1A1A1A;
+  --raw-text-secondary: #555555;
+  --raw-text-muted:     #888888;
+  --raw-text-faint:     #AAAAAA;
+
+  /* Brand — SIX red, same in both modes */
+  --raw-accent-primary:     #D92525;
+  --raw-accent-primary-dim: rgba(217, 37, 37, 0.10);
+
+  /* AI accent — indigo-purple, same in both modes */
+  --raw-accent-ai:      #6457f9;
+  --raw-accent-ai-text: #8b82ff;
+
+  /* States */
+  --raw-state-error:   #dc2626;
+  --raw-state-success: #16a34a;
+  --raw-state-warning: #d97706;
+
+  /* shadcn semantic vars — light mode */
+  --background:            #F7F8FC;
+  --foreground:            #1A1A1A;
+  --card:                  #ffffff;
+  --card-foreground:       #1A1A1A;
+  --popover:               #ffffff;
+  --popover-foreground:    #1A1A1A;
+  --primary:               #D92525;
+  --primary-foreground:    #ffffff;
+  --secondary:             #f1f3f5;
+  --secondary-secondary-foreground: #1A1A1A;
+  --muted:                 #e9ecef;
+  --muted-foreground:      #888888;
+  --accent:                #f1f3f5;
+  --accent-foreground:     #1A1A1A;
+  --destructive:           #dc2626;
+  --border:                #E8E8E8;
+  --input:                 #E8E8E8;
+  --ring:                  #D92525;
+  --radius:                0.75rem;
+
+  /* Charts */
+  --chart-1: #D92525;
+  --chart-2: #6457f9;
+  --chart-3: #16a34a;
+  --chart-4: #d97706;
+  --chart-5: #dc2626;
+
+  /* Sidebar */
+  --sidebar:                    #ffffff;
+  --sidebar-foreground:         #1A1A1A;
+  --sidebar-primary:            #D92525;
+  --sidebar-primary-foreground: #ffffff;
+  --sidebar-accent:             #f1f3f5;
+  --sidebar-accent-foreground:  #1A1A1A;
+  --sidebar-border:             #E8E8E8;
+  --sidebar-ring:               #D92525;
+}
+
+/* ─── Dark mode ─────────────────────────────────────────────────────────── */
+html.dark {
+  /* Raw surface tokens */
+  --raw-bg-base:     #080809;
+  --raw-bg-surface:  #111114;
+  --raw-bg-elevated: #18181c;
+  --raw-bg-subtle:   #1e1e23;
+
+  /* Raw border tokens */
+  --raw-border-default: #2a2a30;
+  --raw-border-subtle:  #3a3a42;
+
+  /* Raw text tokens */
+  --raw-text-primary:   #f0f0f4;
+  --raw-text-secondary: #c0c0cc;
+  --raw-text-muted:     #808090;
+  --raw-text-faint:     #505060;
+
+  /* Brand — SIX red */
+  --raw-accent-primary:     #D92525;
+  --raw-accent-primary-dim: rgba(217, 37, 37, 0.12);
+
+  /* AI accent */
+  --raw-accent-ai:      #6457f9;
+  --raw-accent-ai-text: #8b82ff;
+
+  /* States */
+  --raw-state-error:   #ff4d4f;
+  --raw-state-success: #34d399;
+  --raw-state-warning: #fbbf24;
+
+  /* shadcn semantic vars — dark mode */
+  --background:            #080809;
+  --foreground:            #f0f0f4;
+  --card:                  #111114;
+  --card-foreground:       #f0f0f4;
+  --popover:               #18181c;
+  --popover-foreground:    #f0f0f4;
+  --primary:               #D92525;
+  --primary-foreground:    #ffffff;
+  --secondary:             #18181c;
+  --secondary-secondary-foreground: #f0f0f4;
+  --muted:                 #1e1e23;
+  --muted-foreground:      #808090;
+  --accent:                #1e1e23;
+  --accent-foreground:     #f0f0f4;
+  --destructive:           #ff4d4f;
+  --border:                #2a2a30;
+  --input:                 #2a2a30;
+  --ring:                  #D92525;
+
+  /* Charts */
+  --chart-1: #D92525;
+  --chart-2: #6457f9;
+  --chart-3: #34d399;
+  --chart-4: #fbbf24;
+  --chart-5: #ff4d4f;
+
+  /* Sidebar */
+  --sidebar:                    #111114;
+  --sidebar-foreground:         #f0f0f4;
+  --sidebar-primary:            #D92525;
+  --sidebar-primary-foreground: #ffffff;
+  --sidebar-accent:             #1e1e23;
+  --sidebar-accent-foreground:  #f0f0f4;
+  --sidebar-border:             #2a2a30;
+  --sidebar-ring:               #D92525;
+}
+
+/* ─── Base styles ───────────────────────────────────────────────────────── */
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    background-color: var(--color-bg-base);
+    color: var(--color-text-primary);
+  }
+  html {
+    @apply font-sans;
+  }
+}
